@@ -2,6 +2,7 @@
 #include <chrono>
 #include <vector>
 #include <random>
+#include <fstream>
 
 using namespace std;
 
@@ -17,7 +18,7 @@ struct asteroide {
   double x;
   double y;
   double masa;
-
+  asteroide (){}
   asteroide (double x1, double y1,double m1): x(x1), y(y1), masa(m1) {}
 };
 
@@ -25,57 +26,59 @@ struct planeta {
   double x;
   double y;
   double masa;
-
+  planeta (){}
   planeta (double x2, double y2, double m2): x(x2), y(y2), masa(m2) {}
 };
 
+
 // Genera la distribución de asteroides por el plano
-asteroide * distribucionAsteroides (int nAsteroides, int seed) {
-  default_random_engine re(seed);
+  void distribucion (int nAsteroides, int nPlanetas, int  semilla, asteroide *listaAsteroides, planeta *listaPlanetas) {
+
+  default_random_engine re(semilla);
   uniform_real_distribution<double> xdist(0.0, std::nextafter(WIDTH, std :: numeric_limits<double>::max()));
   uniform_real_distribution<double> ydist(0.0, std::nextafter(HEIGHT, std :: numeric_limits<double>::max()));
   normal_distribution<double> mdist(MASS, SDM);
-  asteroide * listaAsteroides;
-  for (int i=0; i<nAsteroides ; ++i) {
+  for (int i=0; i<nAsteroides; ++i) {
     asteroide aux= asteroide(xdist(re),ydist(re),mdist(re));
     listaAsteroides[i]=aux;
-
   }
-  for (int i=0; i<nAsteroides; i++){
-    cout << "45, it, " << i << &listaAsteroides[i] << endl;
+  for (int i=0; i<nPlanetas ; ++i) {
+    planeta aux= planeta(0,0,mdist(re)*10);
+    listaPlanetas[i]=aux;
   }
-  cout << endl;
 
-  return listaAsteroides;
+
 }
 
 // Genera la distribución de planetas por el plano
-planeta * distribucionPlanetas (int nPlanetas, int seed) {
+/*void distribucionPlanetas (int nPlanetas,  default_random_engine re, planeta *listaPlanetas) {
   //Los planetas se deben situar en los bordes del espacio generado, comenzando en el eje izquierdo
   //(x = 0), el segundo en el superior (y = 0), el tercero en el borde derecho, el cuarto en el inferior,
   //etc. La segunda coordenada seguirá, al igual que los asteroides, una distribución aleatoria con la
   //misma semilla. En cuanto a su masa, se calcula igual que la de los asteroides, pero multiplicada
   //por un valor constante de 10.
-  default_random_engine re(seed);
+  default_random_engine re(semilla);
   uniform_real_distribution<double> xdist(0.0, std::nextafter(WIDTH, std :: numeric_limits<double>::max()));
   uniform_real_distribution<double> ydist(0.0, std::nextafter(HEIGHT, std :: numeric_limits<double>::max()));
-  normal_distribution<double> mdist(MASS*10, SDM);
-  planeta * listaPlanetas;
-  for (int i=0; i<nPlanetas ; ++i) {
-    planeta aux= planeta(0,0,mdist(re));
-    listaPlanetas[i]=aux;
-    cout << "67, it:" << i << endl;
-  }
-  for (int i=0; i<nPlanetas; i++){
-    cout << "70, it:" << i << &listaPlanetas[i] << endl;
-  }
-  cout << endl;
+  normal_distribution<double> mdist(MASS, SDM);
 
-  return listaPlanetas;
-}
 
-int guardarArchivoInicial () {
-  return 0;
+}*/
+
+ void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAsteroides, int nIteraciones, int nPlanetas, int semilla) {
+   ofstream fs ("init_conf.txt");
+   if (fs.is_open())
+  {
+    fs << nAsteroides << " "<< nIteraciones << " "<< nPlanetas << " "<< semilla << "\n";
+    for (int i=0; i<nAsteroides; i++)
+      fs << listaAsteroides[i].x << " " <<listaAsteroides[i].y << " " <<listaAsteroides[i].masa << "\n";
+    for (int i=0; i<nPlanetas; i++)
+      fs << listaPlanetas[i].x << " " <<listaPlanetas[i].y << " " <<listaPlanetas[i].masa << "\n";
+    fs.close();
+  }
+  else cout << "Unable to open file";
+
+
 }
 
 int main (int argc, char** argv) {
@@ -85,6 +88,7 @@ int main (int argc, char** argv) {
     cout << "nasteroids-seq: Wrong arguments.\n Correct use:\n nasteroids-seq num_asteroides num_iteraciones num_planetas semilla" << endl;
     return -1;
   } else {
+
     // Damos nombre a los parámetros de entrada
     int nAsteroides = atoi(argv[1]);
     int nIteraciones = atoi(argv[2]);
@@ -93,20 +97,17 @@ int main (int argc, char** argv) {
 
     cout << "nAsteroides: " << nAsteroides << "\nnIteraciones: " << nIteraciones << "\nnPlanetas: " << nPlanetas << "\nsemilla: " << semilla << endl;
     // 1. Creación de todos los asteroides, y para cada uno obtener su pos X, pos Y y masa.
-    asteroide * listaAsteroides = nullptr;
-    listaAsteroides = distribucionAsteroides(nAsteroides, semilla);
 
-    for (int i=0; i<nAsteroides; i++){
-      cout << "98, it:" << i << &listaAsteroides[i] << endl;
-    }
-    cout << endl;
+    asteroide listaAsteroides [nAsteroides];
+
+
+
     // 2. Creación de todos los planetas, y para cada uno obtener su pos X, pos Y y masa
-    planeta * listaPlanetas = nullptr;
-    listaPlanetas = distribucionPlanetas(nPlanetas, semilla);
+    planeta listaPlanetas [nPlanetas];
+    distribucion(nAsteroides,nPlanetas, semilla, listaAsteroides, listaPlanetas);
 
-    for (int i=0; i<nPlanetas; i++){
-      cout << "106, it:" << i << &listaPlanetas[i] << endl;
-    }
+    //Escribimos el fichero
+    archivoInicial(listaPlanetas, listaAsteroides, nAsteroides, nIteraciones, nPlanetas, semilla);
 
     // 3. Bucle de iteraciones:
       // - Calculo de todas las fuerzas que afectan a todos los asteroides (calcular primero las fuerzas del asteroide "i" con el resto de asteroides y luego con el resto de planetas).
