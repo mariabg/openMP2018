@@ -238,7 +238,16 @@ int main (int argc, char** argv) {
         cout << "aceleracion x del asteroide " << i << ": " << listaAsteroides[i].aceleracion[0] << endl;
         cout << "aceleracion y del asteroide " << i << ": " << listaAsteroides[i].aceleracion[1] << endl;
          // 3.2. Rebote entre asteroides.
-         // TO DO
+         for (int j=i+1; j < nAsteroides; ++j) {
+           if (distanciasAsteroides[i][j] <= 2) {
+             double swap = listaAsteroides[i].x;
+             listaAsteroides[i].x = listaAsteroides[j].x;
+             listaAsteroides[j].x = swap;
+             swap = listaAsteroides[i].y;
+             listaAsteroides[i].y = listaAsteroides[j].y;
+             listaAsteroides[j].y = swap;
+           }
+         }
       }
 
 
