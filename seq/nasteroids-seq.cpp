@@ -96,7 +96,7 @@ int main (int argc, char** argv) {
     // 3. Bucle de iteraciones:
       // - Calculo de todas las fuerzas que afectan a todos los asteroides (calcular primero las fuerzas del asteroide "i" con el resto de asteroides y luego con el resto de planetas).
         // 1. Distancias
-        for()
+        //for()
         // 2. Movimiento normal
           //a. Ángulo de influencia
           //b. Fuerza de atracción
