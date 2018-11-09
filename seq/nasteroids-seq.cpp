@@ -50,21 +50,6 @@ struct planeta {
 
 }
 
-// Genera la distribución de planetas por el plano
-/*void distribucionPlanetas (int nPlanetas,  default_random_engine re, planeta *listaPlanetas) {
-  //Los planetas se deben situar en los bordes del espacio generado, comenzando en el eje izquierdo
-  //(x = 0), el segundo en el superior (y = 0), el tercero en el borde derecho, el cuarto en el inferior,
-  //etc. La segunda coordenada seguirá, al igual que los asteroides, una distribución aleatoria con la
-  //misma semilla. En cuanto a su masa, se calcula igual que la de los asteroides, pero multiplicada
-  //por un valor constante de 10.
-  default_random_engine re(semilla);
-  uniform_real_distribution<double> xdist(0.0, std::nextafter(WIDTH, std :: numeric_limits<double>::max()));
-  uniform_real_distribution<double> ydist(0.0, std::nextafter(HEIGHT, std :: numeric_limits<double>::max()));
-  normal_distribution<double> mdist(MASS, SDM);
-
-
-}*/
-
  void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAsteroides, int nIteraciones, int nPlanetas, int semilla) {
    ofstream fs ("init_conf.txt");
    if (fs.is_open())
@@ -73,6 +58,9 @@ struct planeta {
     for (int i=0; i<nAsteroides; i++)
       fs << listaAsteroides[i].x << " " <<listaAsteroides[i].y << " " <<listaAsteroides[i].masa << "\n";
     for (int i=0; i<nPlanetas; i++)
+    if(i==nPlanetas-1){
+      fs << listaPlanetas[i].x << " " <<listaPlanetas[i].y << " " <<listaPlanetas[i].masa;
+    }else
       fs << listaPlanetas[i].x << " " <<listaPlanetas[i].y << " " <<listaPlanetas[i].masa << "\n";
     fs.close();
   }
