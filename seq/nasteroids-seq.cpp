@@ -3,6 +3,7 @@
 #include <vector>
 #include <random>
 #include <fstream>
+#include <math.h>
 
 using namespace std;
 
@@ -33,20 +34,22 @@ struct planeta {
 
 // Genera la distribución de asteroides por el plano
 void distribucion (int nAsteroides, int nPlanetas, int  semilla, asteroide *listaAsteroides, planeta *listaPlanetas) {
-  default_random_engine re(semilla);
-  uniform_real_distribution<double> xdist(0.0, std::nextafter(WIDTH, std :: numeric_limits<double>::max()));
-  uniform_real_distribution<double> ydist(0.0, std::nextafter(HEIGHT, std :: numeric_limits<double>::max()));
+
+  uniform_real_distribution<double> xdist(0.0, nextafter(WIDTH, numeric_limits<double>::max()));
+  uniform_real_distribution<double> ydist(0.0, nextafter(HEIGHT, numeric_limits<double>::max()));
   normal_distribution<double> mdist(MASS, SDM);
+  default_random_engine re(semilla);
   for (int i=0; i<nAsteroides; ++i) {
     asteroide aux= asteroide(xdist(re),ydist(re),mdist(re));
     listaAsteroides[i]=aux;
   }
+  default_random_engine res(semilla);
   for (int i=0; i<nPlanetas ; ++i) {
     planeta aux;
-    if(i%4==0) aux= planeta(0.0,ydist(re),mdist(re)*10);
-    else if(i%4==1) aux= planeta(xdist(re),0.0,mdist(re)*10);
-    else if(i%4==2) aux= planeta((double)WIDTH,ydist(re),mdist(re)*10);
-    else  aux= planeta(xdist(re),(double)HEIGHT,mdist(re)*10);
+    if(i%4==0) aux= planeta(0.0,ydist(res),mdist(re)*10);
+    else if(i%4==1) aux= planeta(xdist(re),0.0,mdist(res)*10);
+    else if(i%4==2) aux= planeta((double)WIDTH,ydist(res),mdist(re)*10);
+    else  aux= planeta(xdist(res),(double)HEIGHT,mdist(res)*10);
     listaPlanetas[i]=aux;
   }
 }
@@ -80,7 +83,7 @@ int main (int argc, char** argv) {
     int nAsteroides = atoi(argv[1]);
     int nIteraciones = atoi(argv[2]);
     int nPlanetas = atoi(argv[3]);
-    int semilla = atoi(argv[4]);
+    unsigned int semilla = atoi(argv[4]);
     cout << "nAsteroides: " << nAsteroides << "\nnIteraciones: " << nIteraciones << "\nnPlanetas: " << nPlanetas << "\nsemilla: " << semilla << endl;
 
     // 1. Creación de todos los asteroides, y para cada uno obtener su pos X, pos Y y masa.
@@ -96,9 +99,31 @@ int main (int argc, char** argv) {
     // 3. Bucle de iteraciones:
       // - Calculo de todas las fuerzas que afectan a todos los asteroides (calcular primero las fuerzas del asteroide "i" con el resto de asteroides y luego con el resto de planetas).
         // 1. Distancias
-        //for()
-        // 2. Movimiento normal
-          //a. Ángulo de influencia
+        double distanciasAsteroides [nAsteroides][nAsteroides];
+        double pendiente [nAsteroides][nAsteroides];
+        for(unsigned int i= 0; i < nAsteroides; i++) {
+          distanciasAsteroides[i][i] = 0.0;
+          for(unsigned int j= i+1; j < nAsteroides; j++) {
+              distanciasAsteroides[i][j] = pow(pow(listaAsteroides[i].x - listaAsteroides[j].x, 2) + pow(listaAsteroides[i].x - listaAsteroides[j].x, 2), 0.5);
+              distanciasAsteroides[j][i] = distanciasAsteroides[i][j];
+              // 2. Movimiento normal
+              if (distanciasAsteroides[i][j]>2) {
+                  // Calcular pendiente
+                  pendiente[i][j] = (distanciasAsteroides[i].y - distanciasAsteroides[j].y) / (distanciasAsteroides[i].x - distanciasAsteroides[j].x);
+                  pendiente[j][i] = pendiente[i][j];
+                  if(pendiente[i][j] > 1 || pendiente[i][j] < -1){
+
+                  }
+              } else {
+                pendiente[i][j] = 0.0;
+                pendiente[j][i] = 0.0;
+              }
+              //a. Ángulo de influencia
+              if (pendiente[i][j]>) {
+
+              }
+          }
+        }
           //b. Fuerza de atracción
           //c. Aplicar fuerzas a asteroides
 
