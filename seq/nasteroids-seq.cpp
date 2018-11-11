@@ -94,32 +94,26 @@ int main (int argc, char** argv) {
   // Escribimos el fichero con los valores iniciales
   archivoInicial(listaPlanetas, listaAsteroides, nAsteroides, nIteraciones, nPlanetas, semilla);
 
-  // Guardar todas las posiciones al step by step
+  // TO DO: guardar el output
+  // TO DO: guardar un step by step?
+
   // Declarar los arrays dinamicos
   double **distanciasAsteroides = new double*[nAsteroides];
+  double **distanciasAstPlanetas = new double*[nAsteroides];
+  double **pendienteAsteroides = new double*[nAsteroides];
+  double **pendienteAstPlanetas = new double*[nAsteroides];
+  double **angulosAsteroides = new double*[nAsteroides];
+  double **angulosAstPlanetas = new double*[nAsteroides];
+
   for(int i = 0; i<nAsteroides; ++i){
     distanciasAsteroides[i] = new double[nAsteroides];
-  }
-  double **distanciasAstPlanetas = new double*[nAsteroides];
-  for(int i = 0; i<nAsteroides; ++i){
     distanciasAstPlanetas[i] = new double[nPlanetas];
-  }
-  double **pendienteAsteroides = new double*[nAsteroides];
-  for(int i = 0; i<nAsteroides; ++i){
     pendienteAsteroides[i] = new double[nAsteroides];
-  }
-  double **pendienteAstPlanetas = new double*[nAsteroides];
-  for(int i = 0; i<nAsteroides; ++i){
     pendienteAstPlanetas[i]= new double[nPlanetas];
-  }
-  double **angulosAsteroides = new double*[nAsteroides];
-  for(int i = 0; i<nAsteroides; ++i){
     angulosAsteroides[i] = new double[nAsteroides];
-  }
-  double **angulosAstPlanetas = new double*[nAsteroides];
-  for(int i = 0; i<nAsteroides; ++i){
     angulosAstPlanetas[i] = new double[nPlanetas];
   }
+
   double *fuerzasX = new double[nAsteroides];
   double *fuerzasY = new double[nAsteroides];
 
@@ -155,12 +149,8 @@ int main (int argc, char** argv) {
             fuerzasY[i] += fy;
             fuerzasX[j] -= fx;
             fuerzasY[j] -= fy;
-        } else {
-          fuerzasX[i] += 0;
-          fuerzasY[i] += 0;
-          fuerzasX[j] -= 0;
-          fuerzasY[j] -= 0;
         }
+        // TO DO: BORRAR COMENTARIOS POR PANTALLA
         cout << "\ncomparando asteroide " << i << " con asteroide " << j << " tienen fX " << fx << endl;
         cout << "comparando asteroide " << i << " con asteroide " << j << "tienen fY " << fy << endl;
         cout << "comparando asteroide " << j << " con asteroide " << i << "tienen fX " << -fx << endl;
@@ -175,7 +165,7 @@ int main (int argc, char** argv) {
         // 2. Movimiento normal
         // 2.1. Ángulo de influencia
         // 2.1.a. pendienteAsteroides
-        // TO DO COMPROBAR EN FORO O CLASE
+        // TO DO ¿se ejercen fuerzas si los planetas están más cerca de 2?
         if (distanciasAstPlanetas[i][j]>2) {
             pendienteAstPlanetas[i][j] = (listaAsteroides[i].y - listaPlanetas[j].y) / (listaAsteroides[i].x - listaPlanetas[j].x);
         } else {
@@ -234,18 +224,18 @@ int main (int argc, char** argv) {
 
       cout << "\nvelocidad x del asteroide " << i << ": " << listaAsteroides[i].velocidad[0] << endl;
       cout << "velocidad y del asteroide " << i << ": " << listaAsteroides[i].velocidad[1] << endl;
-      cout << endl;
-      cout << "aceleracion x del asteroide " << i << ": " << listaAsteroides[i].aceleracion[0] << endl;
+      cout << "\naceleracion x del asteroide " << i << ": " << listaAsteroides[i].aceleracion[0] << endl;
       cout << "aceleracion y del asteroide " << i << ": " << listaAsteroides[i].aceleracion[1] << endl;
        // 3.2. Rebote entre asteroides.
+       // TO DO: Buffer de intercambio circular
        for (int j=i+1; j < nAsteroides; ++j) {
          if (distanciasAsteroides[i][j] <= 2) {
-           double swap = listaAsteroides[i].x;
-           listaAsteroides[i].x = listaAsteroides[j].x;
-           listaAsteroides[j].x = swap;
-           swap = listaAsteroides[i].y;
-           listaAsteroides[i].y = listaAsteroides[j].y;
-           listaAsteroides[j].y = swap;
+           double swap = listaAsteroides[i].velocidad[0];
+           listaAsteroides[i].velocidad[0] = listaAsteroides[j].velocidad[0];
+           listaAsteroides[j].velocidad[0] = swap;
+           swap = listaAsteroides[i].velocidad[1];
+           listaAsteroides[i].velocidad[1] = listaAsteroides[j].velocidad[1];
+           listaAsteroides[j].velocidad[1] = swap;
          }
        }
     }
