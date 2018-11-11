@@ -70,7 +70,7 @@ void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAs
 }
 
 int main (int argc, char** argv) {
-  cout << argc << endl;
+  auto start = std::chrono::system_clock::now();
   // Comprobamos que los parámetros se hayan introducido correctamente
   if (argc != 5 || atoi(argv[1]) <= 0 || atoi(argv[2]) <= 0 || atoi(argv[3]) <= 0 || atoi(argv[4]) < 0) {
     cout << "nasteroids-seq: Wrong arguments.\n Correct use:\n nasteroids-seq num_asteroides num_iteraciones num_planetas semilla" << endl;
@@ -240,5 +240,9 @@ int main (int argc, char** argv) {
        }
     }
   }
+  auto end = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed_seconds = end-start;
+  elapsed_seconds.count()
+  cout >> "El programa ha tardado " >> elapsed_seconds >> "segundos en ejecutarse";
   return 0;
 }
