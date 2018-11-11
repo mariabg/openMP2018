@@ -1,2 +1,7 @@
-*/.DS_Store
-out
+.DS_Store
+seq/.DS_Store
+seq/salida.out
+seq/init_conf.txt
+par/.DS_Store
+par/salida.out
+par/init_conf.txt
