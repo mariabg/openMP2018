@@ -4,6 +4,7 @@
 #include <random>
 #include <fstream>
 #include <math.h>
+#include <omp.h>
 
 using namespace std;
 
@@ -70,6 +71,8 @@ void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAs
 }
 
 int main (int argc, char** argv) {
+  auto start = std::chrono::system_clock::now();
+
   cout << argc << endl;
   // Comprobamos que los parámetros se hayan introducido correctamente
   if (argc != 5 || atoi(argv[1]) <= 0 || atoi(argv[2]) <= 0 || atoi(argv[3]) <= 0 || atoi(argv[4]) < 0) {
@@ -122,17 +125,19 @@ int main (int argc, char** argv) {
     // 0. Calculo de todas las fuerzas que afectan a todos los asteroides (calcular primero las fuerzas del asteroide "i" con el resto de asteroides y luego con el resto de planetas).
     cout << "\n\nITERACION " << t << endl;
 
+    #pragma omp parallel for collapse(2)
     for (int i=0; i < nAsteroides; ++i) {
       double fx;
       double fy;
-
       for (int j=i+1; j < nAsteroides; ++j) {
+        int id = omp_get_thread_num();
+        cout << "thread" << id;
         // 1. Distancias
         distanciasAsteroides[i][j] = pow(pow(listaAsteroides[i].x - listaAsteroides[j].x, 2) + pow(listaAsteroides[i].y - listaAsteroides[j].y, 2), 0.5);
         // 2. Movimiento normal
         // 2.1. Ángulo de influencia
         // 2.1.a. pendienteAsteroides
-        if (distanciasAsteroides[i][j]>2) {
+        if (distanciasAsteroides[i][j] > DMIN) {
             pendienteAsteroides[i][j] = (listaAsteroides[i].y - listaAsteroides[j].y) / (listaAsteroides[i].x - listaAsteroides[j].x);
             // 2.1.b. Corrección de la pendienteAsteroides
             if (pendienteAsteroides[i][j] > 1 || pendienteAsteroides[i][j] < -1) {
@@ -166,7 +171,7 @@ int main (int argc, char** argv) {
         // 2.1. Ángulo de influencia
         // 2.1.a. pendienteAsteroides
         // TO DO ¿se ejercen fuerzas si los planetas están más cerca de 2?
-        if (distanciasAstPlanetas[i][j]>2) {
+        if (distanciasAstPlanetas[i][j] > DMIN) {
             pendienteAstPlanetas[i][j] = (listaAsteroides[i].y - listaPlanetas[j].y) / (listaAsteroides[i].x - listaPlanetas[j].x);
         } else {
           pendienteAstPlanetas[i][j] = 0.0;
@@ -229,7 +234,7 @@ int main (int argc, char** argv) {
        // 3.2. Rebote entre asteroides.
        // TO DO: Buffer de intercambio circular
        for (int j=i+1; j < nAsteroides; ++j) {
-         if (distanciasAsteroides[i][j] <= 2) {
+         if (distanciasAsteroides[i][j] <= DMIN) {
            double swap = listaAsteroides[i].velocidad[0];
            listaAsteroides[i].velocidad[0] = listaAsteroides[j].velocidad[0];
            listaAsteroides[j].velocidad[0] = swap;
@@ -240,5 +245,8 @@ int main (int argc, char** argv) {
        }
     }
   }
+  auto end = chrono::system_clock::now();
+  auto diff = chrono::duration_cast<chrono::microseconds>(end-start);
+  cout << "El programa ha tardado " << diff.count() << "segundos en ejecutarse";
   return 0;
 }
