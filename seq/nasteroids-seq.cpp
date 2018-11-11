@@ -132,7 +132,7 @@ int main (int argc, char** argv) {
         // 2. Movimiento normal
         // 2.1. Ángulo de influencia
         // 2.1.a. pendienteAsteroides
-        if (distanciasAsteroides[i][j]>2) {
+        if (distanciasAsteroides[i][j] > DMIN) {
             pendienteAsteroides[i][j] = (listaAsteroides[i].y - listaAsteroides[j].y) / (listaAsteroides[i].x - listaAsteroides[j].x);
             // 2.1.b. Corrección de la pendienteAsteroides
             if (pendienteAsteroides[i][j] > 1 || pendienteAsteroides[i][j] < -1) {
@@ -166,7 +166,7 @@ int main (int argc, char** argv) {
         // 2.1. Ángulo de influencia
         // 2.1.a. pendienteAsteroides
         // TO DO ¿se ejercen fuerzas si los planetas están más cerca de 2?
-        if (distanciasAstPlanetas[i][j]>2) {
+        if (distanciasAstPlanetas[i][j] > DMIN) {
             pendienteAstPlanetas[i][j] = (listaAsteroides[i].y - listaPlanetas[j].y) / (listaAsteroides[i].x - listaPlanetas[j].x);
         } else {
           pendienteAstPlanetas[i][j] = 0.0;
@@ -229,7 +229,7 @@ int main (int argc, char** argv) {
        // 3.2. Rebote entre asteroides.
        // TO DO: Buffer de intercambio circular
        for (int j=i+1; j < nAsteroides; ++j) {
-         if (distanciasAsteroides[i][j] <= 2) {
+         if (distanciasAsteroides[i][j] <= DMIN) {
            double swap = listaAsteroides[i].velocidad[0];
            listaAsteroides[i].velocidad[0] = listaAsteroides[j].velocidad[0];
            listaAsteroides[j].velocidad[0] = swap;
@@ -240,9 +240,8 @@ int main (int argc, char** argv) {
        }
     }
   }
-  auto end = std::chrono::system_clock::now();
-  std::chrono::duration<double> elapsed_seconds = end-start;
-  elapsed_seconds.count()
-  cout >> "El programa ha tardado " >> elapsed_seconds >> "segundos en ejecutarse";
+  auto end = chrono::system_clock::now();
+  auto diff = chrono::duration_cast<chrono::microseconds>(end-start);
+  cout << "El programa ha tardado " << diff.count() << "segundos en ejecutarse";
   return 0;
 }
