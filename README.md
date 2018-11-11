@@ -7,3 +7,4 @@
 
 #### Comandos compilación
 - ```g++ -std=c++14 nasteroids-seq.cpp -Wall -Wextra -Wno-deprecated -Werror -pedantic -pedantic-errors -o salida.out```
+- ```g++ -std=c++14 nasteroids-par.cpp -Wall -Wextra -Wno-deprecated -Werror -pedantic -pedantic-errors -o salida.out```
