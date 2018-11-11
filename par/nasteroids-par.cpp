@@ -108,7 +108,8 @@ int main (int argc, char** argv) {
   double **angulosAsteroides = new double*[nAsteroides];
   double **angulosAstPlanetas = new double*[nAsteroides];
 
-  for(int i = 0; i<nAsteroides; ++i){
+  #pragma omp parallel for
+  for (int i = 0; i<nAsteroides; ++i) {
     distanciasAsteroides[i] = new double[nAsteroides];
     distanciasAstPlanetas[i] = new double[nPlanetas];
     pendienteAsteroides[i] = new double[nAsteroides];
@@ -125,13 +126,13 @@ int main (int argc, char** argv) {
     // 0. Calculo de todas las fuerzas que afectan a todos los asteroides (calcular primero las fuerzas del asteroide "i" con el resto de asteroides y luego con el resto de planetas).
     cout << "\n\nITERACION " << t << endl;
 
-    #pragma omp parallel for collapse(2)
+    #pragma omp parallel for collapse(8)
     for (int i=0; i < nAsteroides; ++i) {
       double fx;
       double fy;
       for (int j=i+1; j < nAsteroides; ++j) {
-        int id = omp_get_thread_num();
-        cout << "thread" << id;
+        // int id = omp_get_thread_num();
+        // cout << "thread" << id;
         // 1. Distancias
         distanciasAsteroides[i][j] = pow(pow(listaAsteroides[i].x - listaAsteroides[j].x, 2) + pow(listaAsteroides[i].y - listaAsteroides[j].y, 2), 0.5);
         // 2. Movimiento normal
@@ -199,6 +200,8 @@ int main (int argc, char** argv) {
 
     }
 
+    // #pragma omp parallel for collapse(8)
+    // no añadir hasta que pongamos un critical en el choque entre asteroides
     for (int i = 0; i < nAsteroides; ++i) {
       listaAsteroides[i].aceleracion[0] = fuerzasX[i]/listaAsteroides[i].masa;
       listaAsteroides[i].aceleracion[1] = fuerzasY[i]/listaAsteroides[i].masa;
