@@ -4,7 +4,7 @@
 #include <random>
 #include <fstream>
 #include <math.h>
-
+#include <stdio.h>
 using namespace std;
 
 const int WIDTH = 200;
@@ -40,9 +40,14 @@ void distribucion (int nAsteroides, int nPlanetas, int  semilla, asteroide *list
   uniform_real_distribution<double> xdist{0.0, nextafter(WIDTH, numeric_limits<double>::max())};
   uniform_real_distribution<double> ydist{0.0, nextafter(HEIGHT, numeric_limits<double>::max())};
   normal_distribution<double> mdist{MASS, SDM};
-  default_random_engine re{semilla};
+  default_random_engine re(semilla);
   for (int i=0; i<nAsteroides; ++i) {
-    asteroide aux= asteroide(xdist(re), ydist(re), mdist(re));
+      double x = xdist(re);
+      double y = ydist(re);
+      double m = mdist(re);
+      cout<<"X: "<< x << " Y:  " <<y <<" M: "<< m<<endl;
+
+    asteroide aux= asteroide(x, y, m);
     listaAsteroides[i]=aux;
   }
   for (int i=0; i<nPlanetas ; ++i) {
