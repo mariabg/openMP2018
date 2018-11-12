@@ -117,7 +117,6 @@ int main (int argc, char** argv) {
   archivoInicial(listaPlanetas, listaAsteroides, nAsteroides, nIteraciones, nPlanetas, semilla);
 
   // TO DO: guardar el output
-  // TO DO: guardar un step by step?
 
   // Declarar los arrays dinamicos
   double **distanciasAsteroides = new double*[nAsteroides];
@@ -188,6 +187,7 @@ int main (int argc, char** argv) {
         // 2.1. Ángulo de influencia
         // 2.1.a. pendienteAsteroides
         // TO DO ¿se ejercen fuerzas si los planetas están más cerca de 2?
+        // TO DO cambiar a no calcular la fuerza
         if (distanciasAstPlanetas[i][j] > DMIN) {
             pendienteAstPlanetas[i][j] = (listaAsteroides[i].y - listaPlanetas[j].y) / (listaAsteroides[i].x - listaPlanetas[j].x);
         } else {

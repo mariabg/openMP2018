@@ -127,6 +127,7 @@ int main (int argc, char** argv) {
     cout << "\n\nITERACION " << t << endl;
 
     // #pragma omp parallel for collapse(8)
+    // TO DO declarar la i publica si queremos hacer el collapse para que el segundo bucle acceda a ella
     #pragma omp parallel
     for (int i=0; i < nAsteroides; ++i) {
       double fx;
