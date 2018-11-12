@@ -126,13 +126,14 @@ int main (int argc, char** argv) {
     // 0. Calculo de todas las fuerzas que afectan a todos los asteroides (calcular primero las fuerzas del asteroide "i" con el resto de asteroides y luego con el resto de planetas).
     cout << "\n\nITERACION " << t << endl;
 
-    #pragma omp parallel for collapse(8)
+    // #pragma omp parallel for collapse(8)
+    #pragma omp parallel
     for (int i=0; i < nAsteroides; ++i) {
       double fx;
       double fy;
       for (int j=i+1; j < nAsteroides; ++j) {
-        // int id = omp_get_thread_num();
-        // cout << "thread" << id;
+        int id = omp_get_thread_num();
+        cout << "thread" << id;
         // 1. Distancias
         distanciasAsteroides[i][j] = pow(pow(listaAsteroides[i].x - listaAsteroides[j].x, 2) + pow(listaAsteroides[i].y - listaAsteroides[j].y, 2), 0.5);
         // 2. Movimiento normal
@@ -250,6 +251,6 @@ int main (int argc, char** argv) {
   }
   auto end = chrono::system_clock::now();
   auto diff = chrono::duration_cast<chrono::microseconds>(end-start);
-  cout << "El programa ha tardado " << diff.count() << "segundos en ejecutarse";
+  cout << "El programa ha tardado " << diff.count() << "segundos en ejecutarse\n";
   return 0;
 }

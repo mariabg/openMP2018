@@ -242,6 +242,6 @@ int main (int argc, char** argv) {
   }
   auto end = chrono::system_clock::now();
   auto diff = chrono::duration_cast<chrono::microseconds>(end-start);
-  cout << "El programa ha tardado " << diff.count() << "segundos en ejecutarse";
+  cout << "El programa ha tardado " << diff.count() << "segundos en ejecutarse\n";
   return 0;
 }
