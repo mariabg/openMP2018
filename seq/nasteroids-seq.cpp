@@ -13,7 +13,7 @@ const int MASS = 1000;
 const int SDM = 50;
 const double GRAVITY = 6.674*pow(10,-5);
 const double TIMEINTERVAL = 0.1;
-const double DMIN = 2.0;
+const int DMIN = 2;
 
 struct asteroide {
   double x;
@@ -45,7 +45,7 @@ void distribucion (int nAsteroides, int nPlanetas, int  semilla, asteroide *list
       double x = xdist(re);
       double y = ydist(re);
       double m = mdist(re);
-      cout<<"X: "<< x << " Y:  " <<y <<" M: "<< m<<endl;
+      //cout<<"X: "<< x << " Y:  " <<y <<" M: "<< m<<endl;
 
     asteroide aux= asteroide(x, y, m);
     listaAsteroides[i]=aux;
@@ -142,6 +142,7 @@ int main (int argc, char** argv) {
   for ( int t = 0; t < nIteraciones; ++t) {
     // 0. Calculo de todas las fuerzas que afectan a todos los asteroides (calcular primero las fuerzas del asteroide "i" con el resto de asteroides y luego con el resto de planetas).
     cout << "\n\nITERACION " << t << endl;
+    cout << "\n Asteroides vs Asteroides"<<endl;
 
     for (int i=0; i < nAsteroides; ++i) {
       double fx;
@@ -166,23 +167,23 @@ int main (int argc, char** argv) {
             fy = ((GRAVITY * listaAsteroides[i].masa * listaAsteroides[j].masa)/ pow(distanciasAsteroides[i][j], 2)) * sin(angulosAsteroides[i][j]);
             fx = ((fx > 200) ? 200 : fx);
             fy = ((fy > 200) ? 200 : fy);
+
+            cout << i << " "<<j<<" "<<pow(pow(fx,2)+pow(fy,2),0.5)<<" "<<angulosAsteroides[i][j]<<endl;
             fuerzasX[i] += fx;
             fuerzasY[i] += fy;
             fuerzasX[j] -= fx;
             fuerzasY[j] -= fy;
         }
-        // TO DO: BORRAR COMENTARIOS POR PANTALLA
-        cout << "\ncomparando asteroide " << i << " con asteroide " << j << " tienen fX " << fx << endl;
-        cout << "comparando asteroide " << i << " con asteroide " << j << "tienen fY " << fy << endl;
-        cout << "comparando asteroide " << j << " con asteroide " << i << "tienen fX " << -fx << endl;
-        cout << "comparando asteroide " << j << " con asteroide " << i << "tienen fY " << -fy << endl;
       }
-      cout << "\nla suma de las fuerzas X creadas por los asteroides al asteroide " << i <<" es "<<fuerzasX[i]<< endl;
-      cout << "la suma de las fuerzas Y creadas por los asteroides al asteroide " << i <<" es "<<fuerzasY[i]<< endl;
-
+    }
+      //Lo mismo pero para planetas
+      cout << "\n Asteroides vs Planetas"<<endl;
+      for (int i=0; i < nAsteroides; ++i) {
+        double fx;
+        double fy;
       for (int j=0; j < nPlanetas; ++j) {
         // 1. Distancias
-        distanciasAstPlanetas[i][j] = pow(pow(listaAsteroides[i].x - listaPlanetas[j].x, 2) + pow(listaAsteroides[i].y - listaAsteroides[j].y, 2), 0.5);
+        distanciasAstPlanetas[i][j] = pow(pow(listaAsteroides[i].x - listaPlanetas[j].x, 2) + pow(listaAsteroides[i].y - listaPlanetas[j].y, 2), 0.5);
         // 2. Movimiento normal
         // 2.1. Ángulo de influencia
         // 2.1.a. pendienteAsteroides
@@ -190,29 +191,28 @@ int main (int argc, char** argv) {
         // TO DO cambiar a no calcular la fuerza
         if (distanciasAstPlanetas[i][j] > DMIN) {
             pendienteAstPlanetas[i][j] = (listaAsteroides[i].y - listaPlanetas[j].y) / (listaAsteroides[i].x - listaPlanetas[j].x);
-        } else {
-          pendienteAstPlanetas[i][j] = 0.0;
-        }
-        // 2.1.b. Corrección de la pendienteAsteroides
-        if (pendienteAstPlanetas[i][j] > 1 || pendienteAstPlanetas[i][j] < -1) {
-          pendienteAstPlanetas[i][j] = pendienteAstPlanetas[i][j] - ((int)(pendienteAstPlanetas[i][j])/1);
-        }
-        // 2.1.c. Cálculo del ángulo
-        angulosAstPlanetas[i][j] = atan(pendienteAstPlanetas[i][j]);
+            // 2.1.b. Corrección de la pendienteAsteroides
+            if (pendienteAstPlanetas[i][j] > 1 || pendienteAstPlanetas[i][j] < -1) {
+              pendienteAstPlanetas[i][j] = pendienteAstPlanetas[i][j] - ((int)(pendienteAstPlanetas[i][j])/1);
+            }
+            // 2.1.c. Cálculo del ángulo
+            angulosAstPlanetas[i][j] = atan(pendienteAstPlanetas[i][j]);
 
-        // 2.2. Fuerzas de atracción
-        fx = ((GRAVITY * listaAsteroides[i].masa * listaPlanetas[j].masa)/ pow(distanciasAstPlanetas[i][j], 2)) * cos(angulosAstPlanetas[i][j]);
-        fy = ((GRAVITY * listaAsteroides[i].masa * listaPlanetas[j].masa)/ pow(distanciasAstPlanetas[i][j], 2)) * sin(angulosAstPlanetas[i][j]);
-        fx = ((fx > 200) ? 200 : fx);
-        fy = ((fy > 200) ? 200 : fy);
+            // 2.2. Fuerzas de atracción
+            fx = ((GRAVITY * listaAsteroides[i].masa * listaPlanetas[j].masa)/ pow(distanciasAstPlanetas[i][j], 2)) * cos(angulosAstPlanetas[i][j]);
+            fy = ((GRAVITY * listaAsteroides[i].masa * listaPlanetas[j].masa)/ pow(distanciasAstPlanetas[i][j], 2)) * sin(angulosAstPlanetas[i][j]);
+            fx = ((fx > 200) ? 200 : fx);
+            fy = ((fy > 200) ? 200 : fy);
+        } else {
+          fx=0;
+          fy=0;
+        }
+        cout << i << " "<<j<<" "<<pow(pow(fx,2)+pow(fy,2),0.5)<<" "<<angulosAstPlanetas[i][j]<<endl;
+
         fuerzasX[i] += fx;
         fuerzasY[i] += fy;
 
-        cout << "comparando asteroide " << i << " con planeta " << j << " tienen fuerzasX[i]: " << fx << endl;
-        cout << "comparando asteroide " << i << " con planeta " << j << " tienen fuerzasY[i]: " << fy << endl;
       }
-      cout << "\nla suma de las fuerzas totales X creadas por los asteroides y los planetas al asteroide " << i <<" es "<<fuerzasX[i]<< endl;
-      cout << "la suma de las fuerzas totales Y creadas por los asteroides y los planetas al asteroide " << i <<" es "<<fuerzasY[i]<< endl;
 
     }
 
@@ -244,20 +244,21 @@ int main (int argc, char** argv) {
         listaAsteroides[i].velocidad[1] = -listaAsteroides[i].velocidad[1];
       }
 
-      cout << "\nvelocidad x del asteroide " << i << ": " << listaAsteroides[i].velocidad[0] << endl;
-      cout << "velocidad y del asteroide " << i << ": " << listaAsteroides[i].velocidad[1] << endl;
-      cout << "\naceleracion x del asteroide " << i << ": " << listaAsteroides[i].aceleracion[0] << endl;
-      cout << "aceleracion y del asteroide " << i << ": " << listaAsteroides[i].aceleracion[1] << endl;
        // 3.2. Rebote entre asteroides.
-       // TO DO: Buffer de intercambio circular
-       for (int j=i+1; j < nAsteroides; ++j) {
-         if (distanciasAsteroides[i][j] <= DMIN) {
+       // TO DO: Verificar que esto funciona y que se puedan usar breaks
+
+       for (int j=i+1; j < nAsteroides+i; ++j) {
+         int aux = j;
+         if(j>=nAsteroides) aux = j-nAsteroides;
+         if (distanciasAsteroides[i][aux] <= DMIN) {
            double swap = listaAsteroides[i].velocidad[0];
            listaAsteroides[i].velocidad[0] = listaAsteroides[j].velocidad[0];
-           listaAsteroides[j].velocidad[0] = swap;
+           listaAsteroides[aux].velocidad[0] = swap;
            swap = listaAsteroides[i].velocidad[1];
            listaAsteroides[i].velocidad[1] = listaAsteroides[j].velocidad[1];
-           listaAsteroides[j].velocidad[1] = swap;
+           listaAsteroides[aux].velocidad[1] = swap;
+           break;
+
          }
        }
     }
