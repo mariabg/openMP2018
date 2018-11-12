@@ -52,10 +52,27 @@ void distribucion (int nAsteroides, int nPlanetas, int  semilla, asteroide *list
   }
   for (int i=0; i<nPlanetas ; ++i) {
     planeta aux;
-    if(i%4==0) aux= planeta(0.0,ydist(re),mdist(re)*10);
-    else if(i%4==1) aux= planeta(xdist(re),0.0,mdist(re)*10);
-    else if(i%4==2) aux= planeta(WIDTH,ydist(re),mdist(re)*10);
-    else  aux= planeta(xdist(re),HEIGHT,mdist(re)*10);
+    if(i%4==0) {
+      double y = ydist(re);
+      double m = mdist(re);
+      aux= planeta(0.0,y,m*10);
+
+    }
+    else if(i%4==1) {
+      double x = xdist(re);
+      double m = mdist(re);
+      aux= planeta(x,0.0,m*10);
+    }
+    else if(i%4==2) {
+      double y = ydist(re);
+      double m = mdist(re);
+      aux= planeta(WIDTH,y,m*10);
+    }
+    else {
+      double x = xdist(re);
+      double m = mdist(re);
+      aux= planeta(x,HEIGHT,m*10);
+    }
     listaPlanetas[i]=aux;
   }
 }
