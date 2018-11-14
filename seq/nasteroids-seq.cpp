@@ -35,8 +35,7 @@ struct planeta {
 
 
 // Genera la distribución de asteroides por el plano
-void distribucion (int nAsteroides, int nPlanetas, int  semilla, asteroide *listaAsteroides, planeta *listaPlanetas) {
-
+void distribucion (int nAsteroides, int nPlanetas, int semilla, asteroide *listaAsteroides, planeta *listaPlanetas) {
   uniform_real_distribution<double> xdist{0.0, nextafter(WIDTH, numeric_limits<double>::max())};
   uniform_real_distribution<double> ydist{0.0, nextafter(HEIGHT, numeric_limits<double>::max())};
   normal_distribution<double> mdist{MASS, SDM};
@@ -78,7 +77,7 @@ void distribucion (int nAsteroides, int nPlanetas, int  semilla, asteroide *list
 }
 
 void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAsteroides, int nIteraciones, int nPlanetas, unsigned int semilla) {
-  ofstream fs ("init_conf.txt");
+  ofstream fs ("out.txt");
   fs.precision(3);
   if (fs.is_open()) {
     fs << fixed << nAsteroides << " "<< nIteraciones << " "<< nPlanetas << " "<< semilla << "\n";
@@ -87,6 +86,16 @@ void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAs
     for (int i=0; i<nPlanetas; i++) {
         fs  << fixed << listaPlanetas[i].x << " " <<listaPlanetas[i].y << " " <<listaPlanetas[i].masa << "\n";
     }
+    fs.close();
+  } else cout << "Unable to open file";
+}
+
+void archivoFinal (planeta *listaPlanetas, asteroide *listaAsteroides, int nAsteroides, int nIteraciones, int nPlanetas, unsigned int semilla) {
+  ofstream fs ("init_conf.txt");
+  fs.precision(3);
+  if (fs.is_open()) {
+    for (int i=0; i<nAsteroides; i++)
+      fs  << fixed << listaAsteroides[i].x << " " <<listaAsteroides[i].y << " " << listaAsteroides[i].velocidad[0] << " " <<listaAsteroides[i].velocidad[1] << " " << listaAsteroides[i].masa << "\n";
     fs.close();
   } else cout << "Unable to open file";
 }
