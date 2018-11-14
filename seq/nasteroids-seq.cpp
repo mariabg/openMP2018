@@ -77,7 +77,7 @@ void distribucion (int nAsteroides, int nPlanetas, int semilla, asteroide *lista
 }
 
 void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAsteroides, int nIteraciones, int nPlanetas, unsigned int semilla) {
-  ofstream fs ("out.txt");
+  ofstream fs ("init_conf.txt");
   fs.precision(3);
   if (fs.is_open()) {
     fs << fixed << nAsteroides << " "<< nIteraciones << " "<< nPlanetas << " "<< semilla << "\n";
@@ -89,9 +89,9 @@ void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAs
     fs.close();
   } else cout << "Unable to open file";
 }
-
-void archivoFinal (planeta *listaPlanetas, asteroide *listaAsteroides, int nAsteroides, int nIteraciones, int nPlanetas, unsigned int semilla) {
-  ofstream fs ("init_conf.txt");
+//TO DO:Cambiar nombre del archivo
+void archivoFinal (asteroide *listaAsteroides, int nAsteroides) {
+  ofstream fs ("nuestroOut.txt");
   fs.precision(3);
   if (fs.is_open()) {
     for (int i=0; i<nAsteroides; i++)
@@ -160,6 +160,9 @@ int main (int argc, char** argv) {
       for (int j=i+1; j < nAsteroides; ++j) {
         // 1. Distancias
         distanciasAsteroides[i][j] = pow(pow(listaAsteroides[i].x - listaAsteroides[j].x, 2) + pow(listaAsteroides[i].y - listaAsteroides[j].y, 2), 0.5);
+        distanciasAsteroides[j][i] = distanciasAsteroides[i][j];
+
+
         // 2. Movimiento normal
         // 2.1. Ángulo de influencia
         // 2.1.a. pendienteAsteroides
@@ -257,21 +260,27 @@ int main (int argc, char** argv) {
        // TO DO: Verificar que esto funciona y que se puedan usar breaks
 
        for (int j=i+1; j < nAsteroides+i; ++j) {
-         int aux = j;
-         if(j>=nAsteroides) aux = j-nAsteroides;
-         if (distanciasAsteroides[i][aux] <= DMIN) {
-           double swap = listaAsteroides[i].velocidad[0];
-           listaAsteroides[i].velocidad[0] = listaAsteroides[j].velocidad[0];
-           listaAsteroides[aux].velocidad[0] = swap;
-           swap = listaAsteroides[i].velocidad[1];
-           listaAsteroides[i].velocidad[1] = listaAsteroides[j].velocidad[1];
-           listaAsteroides[aux].velocidad[1] = swap;
-           break;
 
+         int parar= 0;
+         if(parar==0){
+
+             if (distanciasAsteroides[i][j] <= DMIN) {
+             //TO DO quitar cout
+               cout<<"\nHa chocado "<<i<<" con "<< j<<" con distancia   "<<distanciasAsteroides[i][j]<<endl;
+               double swap = listaAsteroides[i].velocidad[0];
+               listaAsteroides[i].velocidad[0] = listaAsteroides[j].velocidad[0];
+               listaAsteroides[j].velocidad[0] = swap;
+               swap = listaAsteroides[i].velocidad[1];
+               listaAsteroides[i].velocidad[1] = listaAsteroides[j].velocidad[1];
+               listaAsteroides[j].velocidad[1] = swap;
+               parar = 1;
+              }
+           }
          }
        }
     }
   }
+  archivoFinal(listaAsteroides,nAsteroides);
   auto end = chrono::system_clock::now();
   auto diff = chrono::duration_cast<chrono::microseconds>(end-start);
   cout << "El programa ha tardado " << diff.count() << "segundos en ejecutarse\n";
