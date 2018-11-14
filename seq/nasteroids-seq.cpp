@@ -253,7 +253,7 @@ int main (int argc, char** argv) {
        // 3.2. Rebote entre asteroides.
        // TO DO: Verificar que esto funciona y que se puedan usar breaks
        int parar= 0;
-       for (int j=i+1; j < nAsteroides+i; ++j) {
+       for (int j=i+1; j < nAsteroides; ++j) {
 
          if(parar==0 && distanciasAsteroides[i][j] <= DMIN) {
            //TO DO quitar cout
@@ -269,7 +269,7 @@ int main (int argc, char** argv) {
         }
       }
     }
-  
+
   archivoFinal(listaAsteroides,nAsteroides);
   auto end = chrono::system_clock::now();
   auto diff = chrono::duration_cast<chrono::microseconds>(end-start);
