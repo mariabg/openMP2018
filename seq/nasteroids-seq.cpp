@@ -269,7 +269,7 @@ int main (int argc, char** argv) {
         }
       }
     }
-  }
+  
   archivoFinal(listaAsteroides,nAsteroides);
   auto end = chrono::system_clock::now();
   auto diff = chrono::duration_cast<chrono::microseconds>(end-start);
