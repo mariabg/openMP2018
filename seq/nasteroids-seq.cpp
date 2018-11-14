@@ -159,7 +159,7 @@ int main (int argc, char** argv) {
       for (int j=i+1; j < nAsteroides; ++j) {
         // 1. Distancias
         distanciasAsteroides[i][j] = pow(pow(listaAsteroides[i].x - listaAsteroides[j].x, 2) + pow(listaAsteroides[i].y - listaAsteroides[j].y, 2), 0.5);
-        distanciasAsteroides[j][i] = distanciasAsteroides[i][j];
+
 
 
         // 2. Movimiento normal
@@ -252,8 +252,9 @@ int main (int argc, char** argv) {
 
        // 3.2. Rebote entre asteroides.
        // TO DO: Verificar que esto funciona y que se puedan usar breaks
+       int parar= 0;
        for (int j=i+1; j < nAsteroides+i; ++j) {
-         int parar= 0;
+
          if(parar==0 && distanciasAsteroides[i][j] <= DMIN) {
            //TO DO quitar cout
            cout <<"\nHa chocado " <<i <<" con " << j <<" con distancia   " << distanciasAsteroides[i][j] << endl;
