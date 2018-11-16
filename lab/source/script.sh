@@ -75,11 +75,11 @@ valgrind --tool=cachegrind --D1=32768,8,32 --L2=262144,8,64 --cachegrind-out-fil
 
 valgrind --tool=cachegrind --D1=32768,8,64 --L2=262144,8,64 --cachegrind-out-file=soa_output/soa_out_03 ./soa
 
-cg_annotate soa_output/soa_out_01 ~/lab/source/soa.cpp > soa_output/soa_out_01
+cg_annotate soa_output/soa_out_01 ~/lab/source/soa.cpp > soa_output/cg_soa_out_01
 
-cg_annotate soa_output/soa_out_02 ~/lab/source/soa.cpp > soa_output/soa_out_02
+cg_annotate soa_output/soa_out_02 ~/lab/source/soa.cpp > soa_output/cg_soa_out_02
 
-cg_annotate soa_output/soa_out_03 ~/lab/source/soa.cpp > soa_output/soa_out_03
+cg_annotate soa_output/soa_out_03 ~/lab/source/soa.cpp > soa_output/cg_soa_out_03
 
 #Look line 12 and 13
 
@@ -91,11 +91,11 @@ valgrind --tool=cachegrind --D1=32768,8,32 --L2=262144,8,64 --cachegrind-out-fil
 
 valgrind --tool=cachegrind --D1=32768,8,64 --L2=262144,8,64 --cachegrind-out-file=aos_output/aos_out_03 ./aos
 
-cg_annotate aos_output/aos_out_01 ~/lab/source/aos.cpp > aos_output/aos_out_01
+cg_annotate aos_output/aos_out_01 ~/lab/source/aos.cpp > aos_output/cg_aos_out_01
 
-cg_annotate aos_output/aos_out_02 ~/lab/source/aos.cpp > aos_output/aos_out_02
+cg_annotate aos_output/aos_out_02 ~/lab/source/aos.cpp > aos_output/cg_aos_out_02
 
-cg_annotate aos_output/aos_out_03 ~/lab/source/aos.cpp > aos_output/aos_out_03
+cg_annotate aos_output/aos_out_03 ~/lab/source/aos.cpp > aos_output/cg_aos_out_03
 
 #Look line 12 and 14
 
@@ -107,27 +107,24 @@ valgrind --tool=cachegrind --D1=32768,8,32 --L2=262144,8,64 --cachegrind-out-fil
 
 valgrind --tool=cachegrind --D1=32768,8,64 --L2=262144,8,64 --cachegrind-out-file=product_output/product_out_03 ./product
 
-cg_annotate product_output/product_out_01 ~/lab/source/product.cpp > product_output/product_out_01
+cg_annotate product_output/product_out_01 ~/lab/source/product.cpp > product_output/cg_product_out_01
 
-cg_annotate product_output/product_out_02 ~/lab/source/product.cpp > product_output/product_out_02
+cg_annotate product_output/product_out_02 ~/lab/source/product.cpp > product_output/cg_product_out_02
 
-cg_annotate product_output/product_out_03 ~/lab/source/product.cpp > product_output/product_out_03
+cg_annotate product_output/product_out_03 ~/lab/source/product.cpp > product_output/cg_product_out_03
 
 #Look line 18 and 20
 
 mkdir product_block_output
 
-valgrind --tool=cachegrind --D1=16384,8,32 --L2=131072,8,64 --cachegrind-out-file=product_block_output/product_block_out_01 ./product_block
+valgrind --tool=cachegrind --D1=16384,8,32 --L2=131072,8,64 --cachegrind-out-file=product_block_output/product_block_out_01 ./product_block 
 
-valgrind --tool=cachegrind --D1=32768,8,32 --L2=262144,8,64 --cachegrind-out-file=product_block_output/product_block_out_02 ./product_block
+valgrind --tool=cachegrind --D1=32768,8,32 --L2=262144,8,64 --cachegrind-out-file=product_block_output/product_block_out_02 ./product_block 
 
-valgrind --tool=cachegrind --D1=32768,8,64 --L2=262144,8,64 --cachegrind-out-file=product_block_output/product_block_out_03 ./product_block
+valgrind --tool=cachegrind --D1=32768,8,64 --L2=262144,8,64 --cachegrind-out-file=product_block_output/product_block_out_03 ./product_block 
 
-cg_annotate product_block_output/product_block_out_01 ~/lab/source/product_block.cpp > product_block_output/product_block_out_01
+cg_annotate product_block_output/product_block_out_01 ~/lab/source/product_block.cpp > product_block_output/cg_product_block_out_01
 
-cg_annotate product_block_output/product_block_out_02 ~/lab/source/product_block.cpp > product_block_output/product_block_out_02
+cg_annotate product_block_output/product_block_out_02 ~/lab/source/product_block.cpp > product_block_output/cg_product_block_out_02
 
-cg_annotate product_block_output/product_block_out_03 ~/lab/source/product_block.cpp > product_block_output/product_block_out_03
-
-
-
+cg_annotate product_block_output/product_block_out_03 ~/lab/source/product_block.cpp > product_block_output/cg_product_block_out_03
