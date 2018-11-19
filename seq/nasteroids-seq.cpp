@@ -273,6 +273,6 @@ int main (int argc, char** argv) {
   archivoFinal(listaAsteroides,nAsteroides);
   auto end = chrono::system_clock::now();
   auto diff = chrono::duration_cast<chrono::microseconds>(end-start);
-  cout << "El programa ha tardado " << diff.count() << "segundos en ejecutarse\n";
+  cout << "El programa ha tardado " << diff.count() << " segundos\n";
   return 0;
 }
