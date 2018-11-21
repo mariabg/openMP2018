@@ -99,16 +99,18 @@ int main (int argc, char** argv) {
 
   // TO DO: guardar el output
   // TO DO: guardar un step by step?
-
+  omp_set_num_threads(8);
   // Declarar los arrays dinamicos
-  double **distanciasAsteroides = new double*[nAsteroides];
-  double **distanciasAstPlanetas = new double*[nAsteroides];
-  double **pendienteAsteroides = new double*[nAsteroides];
-  double **pendienteAstPlanetas = new double*[nAsteroides];
-  double **angulosAsteroides = new double*[nAsteroides];
-  double **angulosAstPlanetas = new double*[nAsteroides];
+  #pragma omp parallel {
+    double **distanciasAsteroides = new double*[nAsteroides];
+    double **distanciasAstPlanetas = new double*[nAsteroides];
+    double **pendienteAsteroides = new double*[nAsteroides];
+    double **pendienteAstPlanetas = new double*[nAsteroides];
+    double **angulosAsteroides = new double*[nAsteroides];
+    double **angulosAstPlanetas = new double*[nAsteroides];
+  };
 
-  #pragma omp parallel for
+  // #pragma omp parallel for
   for (int i = 0; i<nAsteroides; ++i) {
     distanciasAsteroides[i] = new double[nAsteroides];
     distanciasAstPlanetas[i] = new double[nPlanetas];
@@ -122,16 +124,19 @@ int main (int argc, char** argv) {
   double *fuerzasY = new double[nAsteroides];
 
   // III. Bucle de iteraciones:
-  for ( int t = 0; t < nIteraciones; ++t) {
+  // #pragma omp parallel for
+  for (int t = 0; t < nIteraciones; ++t) {
     // 0. Calculo de todas las fuerzas que afectan a todos los asteroides (calcular primero las fuerzas del asteroide "i" con el resto de asteroides y luego con el resto de planetas).
     cout << "\n\nITERACION " << t << endl;
 
     // #pragma omp parallel for collapse(8)
     // TO DO declarar la i publica si queremos hacer el collapse para que el segundo bucle acceda a ella
-    #pragma omp parallel
+    omp_set_num_threads(12);
+    #pragma omp parallel for
     for (int i=0; i < nAsteroides; ++i) {
       double fx;
       double fy;
+      // #pragma omp parallel for
       for (int j=i+1; j < nAsteroides; ++j) {
         int id = omp_get_thread_num();
         cout << "thread" << id;
@@ -153,9 +158,13 @@ int main (int argc, char** argv) {
             fy = ((GRAVITY * listaAsteroides[i].masa * listaAsteroides[j].masa)/ pow(distanciasAsteroides[i][j], 2)) * sin(angulosAsteroides[i][j]);
             fx = ((fx > 200) ? 200 : fx);
             fy = ((fy > 200) ? 200 : fy);
+            #pragma omp atomic
             fuerzasX[i] += fx;
+            #pragma omp atomic
             fuerzasY[i] += fy;
+            #pragma omp atomic
             fuerzasX[j] -= fx;
+            #pragma omp atomic
             fuerzasY[j] -= fy;
         }
         // TO DO: BORRAR COMENTARIOS POR PANTALLA
@@ -167,6 +176,8 @@ int main (int argc, char** argv) {
       cout << "\nla suma de las fuerzas X creadas por los asteroides al asteroide " << i <<" es "<<fuerzasX[i]<< endl;
       cout << "la suma de las fuerzas Y creadas por los asteroides al asteroide " << i <<" es "<<fuerzasY[i]<< endl;
 
+      // #pragma om
+      p parallel for
       for (int j=0; j < nPlanetas; ++j) {
         // 1. Distancias
         distanciasAstPlanetas[i][j] = pow(pow(listaAsteroides[i].x - listaPlanetas[j].x, 2) + pow(listaAsteroides[i].y - listaAsteroides[j].y, 2), 0.5);
@@ -191,7 +202,9 @@ int main (int argc, char** argv) {
         fy = ((GRAVITY * listaAsteroides[i].masa * listaPlanetas[j].masa)/ pow(distanciasAstPlanetas[i][j], 2)) * sin(angulosAstPlanetas[i][j]);
         fx = ((fx > 200) ? 200 : fx);
         fy = ((fy > 200) ? 200 : fy);
+        #pragma omp atomic
         fuerzasX[i] += fx;
+        #pragma omp atomic
         fuerzasY[i] += fy;
 
         cout << "comparando asteroide " << i << " con planeta " << j << " tienen fuerzasX[i]: " << fx << endl;
@@ -199,9 +212,7 @@ int main (int argc, char** argv) {
       }
       cout << "\nla suma de las fuerzas totales X creadas por los asteroides y los planetas al asteroide " << i <<" es "<<fuerzasX[i]<< endl;
       cout << "la suma de las fuerzas totales Y creadas por los asteroides y los planetas al asteroide " << i <<" es "<<fuerzasY[i]<< endl;
-
     }
-
     // #pragma omp parallel for collapse(8)
     // no añadir hasta que pongamos un critical en el choque entre asteroides
     for (int i = 0; i < nAsteroides; ++i) {
@@ -252,6 +263,6 @@ int main (int argc, char** argv) {
   }
   auto end = chrono::system_clock::now();
   auto diff = chrono::duration_cast<chrono::microseconds>(end-start);
-  cout << "El programa ha tardado " << diff.count() << " segundos\n";
+  cout << "El programa ha tardado " << diff.count() << " microsegundos\n";
   return 0;
 }
