@@ -127,22 +127,26 @@ int main (int argc, char** argv) {
   // Escribimos el fichero con los valores iniciales
   archivoInicial(listaPlanetas, listaAsteroides, nAsteroides, nIteraciones, nPlanetas, semilla);
 
-  // Declarar los arrays dinamicos
   double **distanciasAsteroides = new double*[nAsteroides];
   double **distanciasAstPlanetas = new double*[nAsteroides];
   double **pendienteAsteroides = new double*[nAsteroides];
   double **pendienteAstPlanetas = new double*[nAsteroides];
   double **angulosAsteroides = new double*[nAsteroides];
   double **angulosAstPlanetas = new double*[nAsteroides];
+  // Declarar los arrays dinamicos
 
-  for(int i = 0; i<nAsteroides; ++i){
-    distanciasAsteroides[i] = new double[nAsteroides];
-    distanciasAstPlanetas[i] = new double[nPlanetas];
-    pendienteAsteroides[i] = new double[nAsteroides];
-    pendienteAstPlanetas[i]= new double[nPlanetas];
-    angulosAsteroides[i] = new double[nAsteroides];
-    angulosAstPlanetas[i] = new double[nPlanetas];
-  }
+  // #pragma omp parallel shared(distanciasAsteroides, distanciasAstPlanetas, pendienteAsteroides, pendienteAstPlanetas, angulosAsteroides, angulosAstPlanetas) num_threads(16)
+  // {
+  #pragma omp parallel for num_threads(8)
+    for(int i = 0; i<nAsteroides; ++i){
+      distanciasAsteroides[i] = new double[nAsteroides];
+      distanciasAstPlanetas[i] = new double[nPlanetas];
+      pendienteAsteroides[i] = new double[nAsteroides];
+      pendienteAstPlanetas[i]= new double[nPlanetas];
+      angulosAsteroides[i] = new double[nAsteroides];
+      angulosAstPlanetas[i] = new double[nPlanetas];
+    }
+  // }
 
   double *fuerzasX = new double[nAsteroides];
   double *fuerzasY = new double[nAsteroides];
@@ -152,7 +156,7 @@ int main (int argc, char** argv) {
     // 0. Calculo de todas las fuerzas que afectan a todos los asteroides (calcular primero las fuerzas del asteroide "i" con el resto de asteroides y luego con el resto de planetas).
     cout << "\n\nITERACION " << t << endl;
     cout << "\n Asteroides vs Asteroides"<<endl;
-
+    // #pragma omp parallel for num_threads(8)
     for (int i=0; i < nAsteroides; ++i) {
       double fx;
       double fy;
@@ -160,8 +164,6 @@ int main (int argc, char** argv) {
       for (int j=i+1; j < nAsteroides; ++j) {
         // 1. Distancias
         distanciasAsteroides[i][j] = pow(pow(listaAsteroides[i].x - listaAsteroides[j].x, 2) + pow(listaAsteroides[i].y - listaAsteroides[j].y, 2), 0.5);
-
-
 
         // 2. Movimiento normal
         // 2.1. Ángulo de influencia
@@ -181,9 +183,13 @@ int main (int argc, char** argv) {
           fy = ((fy > 200) ? 200 : fy);
 
           cout << i << " "<<j<<" "<<pow(pow(fx,2)+pow(fy,2),0.5)<<" "<<angulosAsteroides[i][j]<<endl;
+          // #pragma omp critical
           fuerzasX[i] += fx;
+          // #pragma omp critical
           fuerzasY[i] += fy;
+          // #pragma omp critical
           fuerzasX[j] -= fx;
+          // #pragma omp critical
           fuerzasY[j] -= fy;
         }
       }
@@ -216,7 +222,9 @@ int main (int argc, char** argv) {
           fy=0;
         }
         cout << i << " " << j << " " << pow(pow(fx,2)+pow(fy,2),0.5) << " " << angulosAstPlanetas[i][j] << endl;
+        // #pragma omp critical
         fuerzasX[i] += fx;
+        // #pragma omp critical
         fuerzasY[i] += fy;
       }
     }
