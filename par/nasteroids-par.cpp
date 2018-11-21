@@ -127,28 +127,15 @@ int main (int argc, char** argv) {
   // Escribimos el fichero con los valores iniciales
   archivoInicial(listaPlanetas, listaAsteroides, nAsteroides, nIteraciones, nPlanetas, semilla);
 
-<<<<<<< HEAD
-  // TO DO: guardar el output
-  // TO DO: guardar un step by step?
-  omp_set_num_threads(8);
-=======
->>>>>>> 140a7eb2c03e04109f228f8372c30139d6842484
   // Declarar los arrays dinamicos
-  #pragma omp parallel {
-    double **distanciasAsteroides = new double*[nAsteroides];
-    double **distanciasAstPlanetas = new double*[nAsteroides];
-    double **pendienteAsteroides = new double*[nAsteroides];
-    double **pendienteAstPlanetas = new double*[nAsteroides];
-    double **angulosAsteroides = new double*[nAsteroides];
-    double **angulosAstPlanetas = new double*[nAsteroides];
-  };
+  double **distanciasAsteroides = new double*[nAsteroides];
+  double **distanciasAstPlanetas = new double*[nAsteroides];
+  double **pendienteAsteroides = new double*[nAsteroides];
+  double **pendienteAstPlanetas = new double*[nAsteroides];
+  double **angulosAsteroides = new double*[nAsteroides];
+  double **angulosAstPlanetas = new double*[nAsteroides];
 
-<<<<<<< HEAD
-  // #pragma omp parallel for
-  for (int i = 0; i<nAsteroides; ++i) {
-=======
   for(int i = 0; i<nAsteroides; ++i){
->>>>>>> 140a7eb2c03e04109f228f8372c30139d6842484
     distanciasAsteroides[i] = new double[nAsteroides];
     distanciasAstPlanetas[i] = new double[nPlanetas];
     pendienteAsteroides[i] = new double[nAsteroides];
@@ -161,30 +148,15 @@ int main (int argc, char** argv) {
   double *fuerzasY = new double[nAsteroides];
 
   // III. Bucle de iteraciones:
-<<<<<<< HEAD
-  // #pragma omp parallel for
-=======
->>>>>>> 140a7eb2c03e04109f228f8372c30139d6842484
   for (int t = 0; t < nIteraciones; ++t) {
     // 0. Calculo de todas las fuerzas que afectan a todos los asteroides (calcular primero las fuerzas del asteroide "i" con el resto de asteroides y luego con el resto de planetas).
     cout << "\n\nITERACION " << t << endl;
     cout << "\n Asteroides vs Asteroides"<<endl;
 
-<<<<<<< HEAD
-    // #pragma omp parallel for collapse(8)
-    // TO DO declarar la i publica si queremos hacer el collapse para que el segundo bucle acceda a ella
-    omp_set_num_threads(12);
-    #pragma omp parallel for
-    for (int i=0; i < nAsteroides; ++i) {
-      double fx;
-      double fy;
-      // #pragma omp parallel for
-=======
     for (int i=0; i < nAsteroides; ++i) {
       double fx;
       double fy;
       // Calculamos fuertzas asteroides-asteroidess
->>>>>>> 140a7eb2c03e04109f228f8372c30139d6842484
       for (int j=i+1; j < nAsteroides; ++j) {
         // 1. Distancias
         distanciasAsteroides[i][j] = pow(pow(listaAsteroides[i].x - listaAsteroides[j].x, 2) + pow(listaAsteroides[i].y - listaAsteroides[j].y, 2), 0.5);
@@ -195,28 +167,6 @@ int main (int argc, char** argv) {
         // 2.1. Ángulo de influencia
         // 2.1.a. pendienteAsteroides
         if (distanciasAsteroides[i][j] > DMIN) {
-<<<<<<< HEAD
-            pendienteAsteroides[i][j] = (listaAsteroides[i].y - listaAsteroides[j].y) / (listaAsteroides[i].x - listaAsteroides[j].x);
-            // 2.1.b. Corrección de la pendienteAsteroides
-            if (pendienteAsteroides[i][j] > 1 || pendienteAsteroides[i][j] < -1) {
-              pendienteAsteroides[i][j] = pendienteAsteroides[i][j] - ((int)(pendienteAsteroides[i][j])/1);
-            }
-            // 2.1.c. Cálculo del ángulo
-            angulosAsteroides[i][j] = atan(pendienteAsteroides[i][j]);
-            // 2.2. Fuerzas de atracción
-            fx = ((GRAVITY * listaAsteroides[i].masa * listaAsteroides[j].masa)/ pow(distanciasAsteroides[i][j], 2)) * cos(angulosAsteroides[i][j]);
-            fy = ((GRAVITY * listaAsteroides[i].masa * listaAsteroides[j].masa)/ pow(distanciasAsteroides[i][j], 2)) * sin(angulosAsteroides[i][j]);
-            fx = ((fx > 200) ? 200 : fx);
-            fy = ((fy > 200) ? 200 : fy);
-            #pragma omp atomic
-            fuerzasX[i] += fx;
-            #pragma omp atomic
-            fuerzasY[i] += fy;
-            #pragma omp atomic
-            fuerzasX[j] -= fx;
-            #pragma omp atomic
-            fuerzasY[j] -= fy;
-=======
           pendienteAsteroides[i][j] = (listaAsteroides[i].y - listaAsteroides[j].y) / (listaAsteroides[i].x - listaAsteroides[j].x);
           // 2.1.b. Corrección de la pendienteAsteroides
           if (pendienteAsteroides[i][j] > 1 || pendienteAsteroides[i][j] < -1) {
@@ -235,15 +185,12 @@ int main (int argc, char** argv) {
           fuerzasY[i] += fy;
           fuerzasX[j] -= fx;
           fuerzasY[j] -= fy;
->>>>>>> 140a7eb2c03e04109f228f8372c30139d6842484
         }
       }
 
       // Calculamos fuertzas asteroides-planetas
       cout << "\n Asteroides vs Planetas"<<endl;
 
-      // #pragma om
-      p parallel for
       for (int j=0; j < nPlanetas; ++j) {
         // 1. Distancias
         distanciasAstPlanetas[i][j] = pow(pow(listaAsteroides[i].x - listaPlanetas[j].x, 2) + pow(listaAsteroides[i].y - listaPlanetas[j].y, 2), 0.5);
@@ -268,34 +215,13 @@ int main (int argc, char** argv) {
           fx=0;
           fy=0;
         }
-<<<<<<< HEAD
-        // 2.1.c. Cálculo del ángulo
-        angulosAstPlanetas[i][j] = atan(pendienteAstPlanetas[i][j]);
-
-        // 2.2. Fuerzas de atracción
-        fx = ((GRAVITY * listaAsteroides[i].masa * listaPlanetas[j].masa)/ pow(distanciasAstPlanetas[i][j], 2)) * cos(angulosAstPlanetas[i][j]);
-        fy = ((GRAVITY * listaAsteroides[i].masa * listaPlanetas[j].masa)/ pow(distanciasAstPlanetas[i][j], 2)) * sin(angulosAstPlanetas[i][j]);
-        fx = ((fx > 200) ? 200 : fx);
-        fy = ((fy > 200) ? 200 : fy);
-        #pragma omp atomic
-=======
         cout << i << " " << j << " " << pow(pow(fx,2)+pow(fy,2),0.5) << " " << angulosAstPlanetas[i][j] << endl;
->>>>>>> 140a7eb2c03e04109f228f8372c30139d6842484
         fuerzasX[i] += fx;
-        #pragma omp atomic
         fuerzasY[i] += fy;
       }
-<<<<<<< HEAD
-      cout << "\nla suma de las fuerzas totales X creadas por los asteroides y los planetas al asteroide " << i <<" es "<<fuerzasX[i]<< endl;
-      cout << "la suma de las fuerzas totales Y creadas por los asteroides y los planetas al asteroide " << i <<" es "<<fuerzasY[i]<< endl;
-    }
-    // #pragma omp parallel for collapse(8)
-    // no añadir hasta que pongamos un critical en el choque entre asteroides
-=======
     }
 
     // CÁLCULO DE COLISIONES
->>>>>>> 140a7eb2c03e04109f228f8372c30139d6842484
     for (int i = 0; i < nAsteroides; ++i) {
       listaAsteroides[i].aceleracion[0] = fuerzasX[i]/listaAsteroides[i].masa;
       listaAsteroides[i].aceleracion[1] = fuerzasY[i]/listaAsteroides[i].masa;
