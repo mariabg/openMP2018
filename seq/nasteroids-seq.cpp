@@ -154,7 +154,6 @@ int main (int argc, char** argv) {
     for (int i=0; i < nAsteroides; ++i) {
       double fx;
       double fy;
-
       // Calculamos fuertzas asteroides-asteroidess
       for (int j=i+1; j < nAsteroides; ++j) {
         // 1. Distancias
@@ -186,12 +185,10 @@ int main (int argc, char** argv) {
           fuerzasY[j] -= fy;
         }
       }
-    }
+
       // Calculamos fuertzas asteroides-planetas
       cout << "\n Asteroides vs Planetas"<<endl;
-      for (int i=0; i < nAsteroides; ++i) {
-        double fx;
-        double fy;
+
       for (int j=0; j < nPlanetas; ++j) {
         // 1. Distancias
         distanciasAstPlanetas[i][j] = pow(pow(listaAsteroides[i].x - listaPlanetas[j].x, 2) + pow(listaAsteroides[i].y - listaPlanetas[j].y, 2), 0.5);
@@ -222,6 +219,7 @@ int main (int argc, char** argv) {
       }
     }
 
+    // CÁLCULO DE COLISIONES
     for (int i = 0; i < nAsteroides; ++i) {
       listaAsteroides[i].aceleracion[0] = fuerzasX[i]/listaAsteroides[i].masa;
       listaAsteroides[i].aceleracion[1] = fuerzasY[i]/listaAsteroides[i].masa;
@@ -273,6 +271,6 @@ int main (int argc, char** argv) {
   archivoFinal(listaAsteroides,nAsteroides);
   auto end = chrono::system_clock::now();
   auto diff = chrono::duration_cast<chrono::microseconds>(end-start);
-  cout << "El programa ha tardado " << diff.count() << " segundos\n";
+  cout << "El programa ha tardado " << diff.count() << " microsegundos\n";
   return 0;
 }
