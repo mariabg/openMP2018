@@ -177,8 +177,6 @@ int main (int argc, char** argv) {
 
           f = ((f > 200) ? 200 : f);
           fx = f*cos(angulosAsteroides[i][j]);
-
-
           fy = f* sin(angulosAsteroides[i][j]);
 
           //cout << i << " "<<j<<" "<<pow(pow(fx,2)+pow(fy,2),0.5)<<" "<<angulosAsteroides[i][j]<<endl;
@@ -212,6 +210,7 @@ int main (int argc, char** argv) {
             f = ((f > 200) ? 200 : f);
             fx = f*cos(angulosAstPlanetas[i][j]);
             fy = f* sin(angulosAstPlanetas[i][j]);
+            
         } else {
           fx=0;
           fy=0;
