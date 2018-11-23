@@ -46,7 +46,7 @@ void distribucion (int nAsteroides, int nPlanetas, int semilla, asteroide *lista
       double x = xdist(re);
       double y = ydist(re);
       double m = mdist(re);
-      cout<<"X: "<< x << " Y:  " <<y <<" M: "<< m<<endl;
+      ////cout<<"X: "<< x << " Y:  " <<y <<" M: "<< m<<endl;
 
     asteroide aux= asteroide(x, y, m);
     listaAsteroides[i]=aux;
@@ -114,7 +114,7 @@ int main (int argc, char** argv) {
   int nIteraciones = atoi(argv[2]);
   int nPlanetas = atoi(argv[3]);
   unsigned int semilla = atoi(argv[4]);
-  cout << "nAsteroides: " << nAsteroides << "\nnIteraciones: " << nIteraciones << "\nnPlanetas: " << nPlanetas << "\nsemilla: " << semilla << endl;
+  //cout << "nAsteroides: " << nAsteroides << "\nnIteraciones: " << nIteraciones << "\nnPlanetas: " << nPlanetas << "\nsemilla: " << semilla << endl;
 
   // I. Creación de todos los asteroides, y para cada uno obtener su pos X, pos Y y masa.
   // asteroide listaAsteroides [];
@@ -161,8 +161,8 @@ int main (int argc, char** argv) {
         fuerzasY[i] = new double[nAsteroides+nPlanetas];
       }
     // 0. Calculo de todas las fuerzas que afectan a todos los asteroides (calcular primero las fuerzas del asteroide "i" con el resto de asteroides y luego con el resto de planetas).
-    cout << "\n\nITERACION " << t << endl;
-    cout << "\n Asteroides vs Asteroides"<<endl;
+    //cout << "\n\nITERACION " << t << endl;
+    //cout << "\n Asteroides vs Asteroides"<<endl;
     // #pragma omp parallel for num_threads(8)
     // --> deberia paralelizarse en guiado o dinamico
     #pragma omp parallel for schedule(dynamic)
@@ -193,7 +193,7 @@ int main (int argc, char** argv) {
           fy = f* sin(angulosAsteroides[i][j]);
 
 
-          cout << i << " "<<j<<" "<<pow(pow(fx,2)+pow(fy,2),0.5)<<" "<<angulosAsteroides[i][j]<<endl;
+          //cout << i << " "<<j<<" "<<pow(pow(fx,2)+pow(fy,2),0.5)<<" "<<angulosAsteroides[i][j]<<endl;
 
           fuerzasX[i][j] = fx;
           fuerzasY[i][j] = fy;
@@ -203,7 +203,7 @@ int main (int argc, char** argv) {
       }
 
       // Calculamos fuertzas asteroides-planetas
-      cout << "\n Asteroides vs Planetas"<<endl;
+      //cout << "\n Asteroides vs Planetas"<<endl;
       // --> deberia paralelizarse en serial
       #pragma omp parallel for schedule(static)
       for (int j=0; j < nPlanetas; ++j) {
@@ -230,7 +230,7 @@ int main (int argc, char** argv) {
           fx=0;
           fy=0;
         }
-        cout << i << " " << j << " " << pow(pow(fx,2)+pow(fy,2),0.5) << " " << angulosAstPlanetas[i][j] << endl;
+        ////cout << i << " " << j << " " << pow(pow(fx,2)+pow(fy,2),0.5) << " " << angulosAstPlanetas[i][j] << endl;
 
         fuerzasX[i][j+nAsteroides] += fx;
         fuerzasY[i][j+nAsteroides] += fy;
@@ -239,7 +239,7 @@ int main (int argc, char** argv) {
     // TO DO: (borrar este comentario) sumar fuerzas aqui en fuerzasAc en secuencial
     double * fuerzasAcX = new double[nAsteroides];
     double * fuerzasAcY = new double[nAsteroides];
-    //--->intentar paralelizar en dos threads x e y por separado
+    //--->intentar paralelizar en dos th x e y
     for(int i=0; i<nAsteroides; ++i){
       for(int j=0; j<nAsteroides+nPlanetas; j++){
         fuerzasAcX[i] += fuerzasX[i][j];
@@ -282,8 +282,8 @@ int main (int argc, char** argv) {
        for (int j=i+1; j < nAsteroides; ++j) {
 
          if(parar==0 && distanciasAsteroides[i][j] <= DMIN) {
-           //TO DO quitar cout
-           cout <<"\nHa chocado " <<i <<" con " << j <<" con distancia   " << distanciasAsteroides[i][j] << endl;
+           //TO DO quitar //cout
+           //cout <<"\nHa chocado " <<i <<" con " << j <<" con distancia   " << distanciasAsteroides[i][j] << endl;
            double swap = listaAsteroides[i].velocidad[0];
            listaAsteroides[i].velocidad[0] = listaAsteroides[j].velocidad[0];
            listaAsteroides[j].velocidad[0] = swap;
