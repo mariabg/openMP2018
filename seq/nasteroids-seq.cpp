@@ -91,7 +91,7 @@ void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAs
 }
 //TO DO:Cambiar nombre del archivo
 void archivoFinal (asteroide *listaAsteroides, int nAsteroides) {
-  ofstream fs ("nuestroOut.txt");
+  ofstream fs ("nuestroOut-seq.txt");
   fs.precision(3);
   if (fs.is_open()) {
     for (int i=0; i<nAsteroides; i++)
@@ -210,7 +210,7 @@ int main (int argc, char** argv) {
             f = ((f > 200) ? 200 : f);
             fx = f*cos(angulosAstPlanetas[i][j]);
             fy = f* sin(angulosAstPlanetas[i][j]);
-            
+
         } else {
           fx=0;
           fy=0;

@@ -93,7 +93,7 @@ void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAs
 }
 //TO DO:Cambiar nombre del archivo
 void archivoFinal (asteroide *listaAsteroides, int nAsteroides) {
-  ofstream fs ("nuestroOut.txt");
+  ofstream fs ("nuestroOut-par.txt");
   fs.precision(3);
   if (fs.is_open()) {
     for (int i=0; i<nAsteroides; i++)
@@ -135,19 +135,18 @@ int main (int argc, char** argv) {
   double **angulosAstPlanetas = new double*[nAsteroides];
   // Declarar los arrays dinamicos
 
-  // #pragma omp parallel shared(distanciasAsteroides, distanciasAstPlanetas, pendienteAsteroides, pendienteAstPlanetas, angulosAsteroides, angulosAstPlanetas) num_threads(16)
-  // {
-  #pragma omp parallel for num_threads(8)
-    for(int i = 0; i<nAsteroides; ++i){
-      distanciasAsteroides[i] = new double[nAsteroides];
-      distanciasAstPlanetas[i] = new double[nPlanetas];
-      pendienteAsteroides[i] = new double[nAsteroides];
-      pendienteAstPlanetas[i]= new double[nPlanetas];
-      angulosAsteroides[i] = new double[nAsteroides];
-      angulosAstPlanetas[i] = new double[nPlanetas];
+   //#pragma omp parallel shared(distanciasAsteroides, distanciasAstPlanetas, pendienteAsteroides, pendienteAstPlanetas, angulosAsteroides, angulosAstPlanetas) num_threads(16)
+   //{
+     #pragma omp parallel for num_threads(16)
+     for(int i = 0; i<nAsteroides; ++i) {
+        distanciasAsteroides[i] = new double[nAsteroides];
+        distanciasAstPlanetas[i] = new double[nPlanetas];
+        pendienteAsteroides[i] = new double[nAsteroides];
+        pendienteAstPlanetas[i]= new double[nPlanetas];
+        angulosAsteroides[i] = new double[nAsteroides];
+        angulosAstPlanetas[i] = new double[nPlanetas];
     }
-  // }
-
+// }
 
 
   // III. Bucle de iteraciones:
@@ -155,7 +154,7 @@ int main (int argc, char** argv) {
     double **fuerzasX = new double*[nAsteroides];
     double **fuerzasY = new double*[nAsteroides];
 
-    #pragma omp parallel for num_threads(8)
+    #pragma omp parallel for schedule(static) num_threads(16)
       for(int i = 0; i<nAsteroides; ++i){
         fuerzasX[i] = new double[nAsteroides+nPlanetas];
         fuerzasY[i] = new double[nAsteroides+nPlanetas];
@@ -165,11 +164,14 @@ int main (int argc, char** argv) {
     //cout << "\n Asteroides vs Asteroides"<<endl;
     // #pragma omp parallel for num_threads(8)
     // --> deberia paralelizarse en guiado o dinamico
-    #pragma omp parallel for schedule(dynamic)
+
+   #pragma omp parallel for schedule(dynamic) num_threads(16)
     for (int i=0; i < nAsteroides; ++i) {
       double fx;
       double fy;
       // Calculamos fuertzas asteroides-asteroidess
+
+  //  #pragma omp parallel for schedule(static) num_threads(8)
       for (int j=i+1; j < nAsteroides; ++j) {
         // 1. Distancias
         distanciasAsteroides[i][j] = pow(pow(listaAsteroides[i].x - listaAsteroides[j].x, 2) + pow(listaAsteroides[i].y - listaAsteroides[j].y, 2), 0.5);
@@ -204,8 +206,6 @@ int main (int argc, char** argv) {
 
       // Calculamos fuertzas asteroides-planetas
       //cout << "\n Asteroides vs Planetas"<<endl;
-      // --> deberia paralelizarse en serial
-      #pragma omp parallel for schedule(static)
       for (int j=0; j < nPlanetas; ++j) {
         // 1. Distancias
         distanciasAstPlanetas[i][j] = pow(pow(listaAsteroides[i].x - listaPlanetas[j].x, 2) + pow(listaAsteroides[i].y - listaPlanetas[j].y, 2), 0.5);
@@ -225,13 +225,12 @@ int main (int argc, char** argv) {
             double f = ((GRAVITY * listaAsteroides[i].masa * listaPlanetas[j].masa)/ pow(distanciasAstPlanetas[i][j], 2));
             f = ((f > 200) ? 200 : f);
             fx = f*cos(angulosAstPlanetas[i][j]);
-            fy = f* sin(angulosAstPlanetas[i][j]);
+            fy = f*sin(angulosAstPlanetas[i][j]);
         } else {
           fx=0;
           fy=0;
         }
         ////cout << i << " " << j << " " << pow(pow(fx,2)+pow(fy,2),0.5) << " " << angulosAstPlanetas[i][j] << endl;
-
         fuerzasX[i][j+nAsteroides] += fx;
         fuerzasY[i][j+nAsteroides] += fy;
       }
@@ -240,14 +239,22 @@ int main (int argc, char** argv) {
     double * fuerzasAcX = new double[nAsteroides];
     double * fuerzasAcY = new double[nAsteroides];
     //--->intentar paralelizar en dos th x e y
+   // #pragma omp parallel num_threads(2)
+    //{
+   // int num = omp_get_thread_num();
     for(int i=0; i<nAsteroides; ++i){
-      for(int j=0; j<nAsteroides+nPlanetas; j++){
-        fuerzasAcX[i] += fuerzasX[i][j];
-        fuerzasAcY[i] += fuerzasY[i][j];
+      for(int j=0; j<nAsteroides+nPlanetas; ++j){
+       //    if(num==0)
+            fuerzasAcX[i] += fuerzasX[i][j];
+        //  if(num==1)
+            fuerzasAcY[i] += fuerzasY[i][j];
+        }
       }
-    }
-
+   // }
     // CÁLCULO DE COLISIONES
+    // To Do: paralelizar
+
+ #pragma omp parallel for schedule(dynamic) num_threads(16)
     for (int i = 0; i < nAsteroides; ++i) {
       listaAsteroides[i].aceleracion[0] = fuerzasAcX[i]/listaAsteroides[i].masa;
       listaAsteroides[i].aceleracion[1] = fuerzasAcY[i]/listaAsteroides[i].masa;
@@ -277,8 +284,10 @@ int main (int argc, char** argv) {
       }
 
        // 3.2. Rebote entre asteroides.
-       // TO DO: Verificar que esto funciona y que se puedan usar breaks
+       // TO DO: paralelizar
        int parar= 0;
+
+     // #pragma omp parallel for schedule(dynamic) num_threads(8)
        for (int j=i+1; j < nAsteroides; ++j) {
 
          if(parar==0 && distanciasAsteroides[i][j] <= DMIN) {
