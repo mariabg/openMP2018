@@ -5,7 +5,6 @@
 #include <fstream>
 #include <math.h>
 #include <stdio.h>
-#include <omp.h>
 #include <time.h>
 
 
@@ -36,14 +35,14 @@ int main (int argc, char** argv) {
   }
 }
   else{
- 
+
     for(int j=0;j<vueltas;++j){
-	      
+
 	 double start = clock();
 	 double *asteroides = new double[tam];
 
     for( int i =0; i<tam; ++i) {
-	asteroides[i]=i;    
+	asteroides[i]=i;
       cout << asteroides[i] << endl;
     }
 	delete[] asteroides;
