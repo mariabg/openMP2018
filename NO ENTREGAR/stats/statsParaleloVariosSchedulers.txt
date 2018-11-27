@@ -1,0 +1,23 @@
+350, 100, 250, 10, 20, par, dynamic par 2 pragma 1, 3107725.3
+350, 100, 250, 10, 20, par, dynamic par 2 pragma 2, 1664947.6
+350, 100, 250, 10, 20, par, dinamicos par 2 pragma 4, 1003204.65
+350, 100, 250, 10, 20, par, dinamicos par 2 pragma 8, 1012394.55
+350, 100, 250, 10, 20, par, dinamicos par 2 pragma 16, 1361419.75
+
+350, 100, 250, 10, 20, par, 1 guided par 2 pragma 1, 3071850.55
+350, 100, 250, 10, 20, par, 1 guided par 2 pragma 2, 1941043.8
+350, 100, 250, 10, 20, par, 1 guided par 2 pragma 4, 1655923.0
+350, 100, 250, 10, 20, par, 1 guided par 2 pragma 8, 1131623.05
+350, 100, 250, 10, 20, par, 1 guided par 2 pragma 16, 1149757.3
+
+
+350, 100, 250, 10, 20, par, 2 guided par 2 pragma 4, 1237730.35
+350, 100, 250, 10, 20, par, 2 guided par 2 pragma 8, 1028443.4
+350, 100, 250, 10, 20, par, 2 guided par 2 pragma 16, 1020042.95
+
+350, 100, 250, 10, 20, par, guided par 2 pragma 4, 1250386.25
+350, 100, 250, 10, 20, par, guided par 2 pragma 8, 1097877.2
+350, 100, 250, 10, 20, par, guided par 2 pragma 16, 1079167.75
+
+
+

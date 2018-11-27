@@ -1,0 +1,58 @@
+--------------------------------------------------------------------------------
+I1 cache:         32768 B, 64 B, 8-way associative
+D1 cache:         32768 B, 32 B, 8-way associative
+LL cache:         262144 B, 64 B, 8-way associative
+Command:          ./loop_merge
+Data file:        loop_merge_output/loop_merge_out_02
+Events recorded:  Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw
+Events shown:     Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw
+Event sort order: Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw
+Thresholds:       0.1 100 100 100 100 100 100 100 100
+Include dirs:     
+User annotated:   /users/alumnos-15-16/a0346154/lab/source/loop_merge.cpp
+Auto-annotation:  off
+
+--------------------------------------------------------------------------------
+       Ir I1mr ILmr        Dr    D1mr   DLmr      Dw   D1mw   DLmw 
+--------------------------------------------------------------------------------
+4,890,358  977  975 1,905,597 118,714 58,370 380,776 53,377 26,359  PROGRAM TOTALS
+
+--------------------------------------------------------------------------------
+       Ir I1mr ILmr        Dr    D1mr   DLmr      Dw   D1mw   DLmw  file:function
+--------------------------------------------------------------------------------
+2,800,013    3    3 1,400,004 100,003 50,004 200,004 50,002 25,002  /users/alumnos-15-16/a0346154/lab/source/loop_merge.cpp:main
+  895,186   13   13   152,128   2,927  1,589  50,726     26      7  /build/glibc-yWQXbR/glibc-2.24/elf/dl-lookup.c:_dl_lookup_symbol_x
+  562,331   36   36   187,247   4,156    923  82,849     29      8  /build/glibc-yWQXbR/glibc-2.24/elf/dl-lookup.c:do_lookup_x
+  254,132   26   26    54,666   4,284  2,626  24,684  2,461    886  /build/glibc-yWQXbR/glibc-2.24/elf/../sysdeps/x86_64/dl-machine.h:_dl_relocate_object
+  106,467    7    7    36,152     496    187  12,061     12      5  /build/glibc-yWQXbR/glibc-2.24/elf/dl-lookup.c:check_match
+   80,875   10   10    25,588   3,558  1,378   3,276      4      0  /build/glibc-yWQXbR/glibc-2.24/elf/do-rel.h:_dl_relocate_object
+   66,818   42   42    18,025     156     61       0      0      0  /build/glibc-yWQXbR/glibc-2.24/string/../sysdeps/x86_64/multiarch/../strcmp.S:strcmp
+   56,562    8    8    13,779   2,081  1,010      17      3      0  /build/glibc-yWQXbR/glibc-2.24/elf/dl-addr.c:_dl_addr
+    9,666    0    0     3,222       0      0       0      0      0  /build/glibc-yWQXbR/glibc-2.24/elf/../sysdeps/generic/ldsodefs.h:_dl_relocate_object
+    6,018    1    1     2,006       0      0       0      0      0  /build/glibc-yWQXbR/glibc-2.24/elf/../sysdeps/generic/ldsodefs.h:do_lookup_x
+    5,693    3    3     1,471      40     11     848      3      2  /build/glibc-yWQXbR/glibc-2.24/elf/dl-misc.c:_dl_name_match_p
+
+--------------------------------------------------------------------------------
+-- User-annotated source: /users/alumnos-15-16/a0346154/lab/source/loop_merge.cpp
+--------------------------------------------------------------------------------
+       Ir I1mr ILmr      Dr   D1mr   DLmr      Dw   D1mw   DLmw 
+
+        3    1    1       0      0      0       1      0      0  int main(){
+        1    0    0       0      0      0       1      0      0    constexpr int maxsize = 100000;
+        .    .    .       .      .      .       .      .      .    double z[maxsize], t[maxsize], u[maxsize], v[maxsize];
+        .    .    .       .      .      .       .      .      .  
+  400,003    0    0 200,001      0      0       1      0      0    for (int i=0; i<maxsize; ++i) {
+1,000,000    1    1 500,000 50,001 25,002 100,000 25,001 12,501      u[i] = z[i] + t[i];
+        .    .    .       .      .      .       .      .      .    }
+  400,003    0    0 200,001      0      0       1      0      0    for (int i=0; i<maxsize; ++i) {
+1,000,000    1    1 500,000 50,001 25,001 100,000 25,001 12,501      v[i] = u[i] + t[i];
+        .    .    .       .      .      .       .      .      .    }
+        .    .    .       .      .      .       .      .      .  
+        1    0    0       0      0      0       0      0      0    return 0;
+        2    0    0       2      1      1       0      0      0  }
+
+--------------------------------------------------------------------------------
+Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw 
+--------------------------------------------------------------------------------
+57    0    0 73   84   86 53   94   95  percentage of events annotated
+

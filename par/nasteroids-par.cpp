@@ -9,6 +9,7 @@
 
 using namespace std;
 
+//Constantes predefinidas en el enunciado del problema
 const int WIDTH = 200;
 const int HEIGHT = 200;
 const int MASS = 1000;
@@ -36,7 +37,7 @@ struct planeta {
 };
 
 
-// Genera la distribución de asteroides por el plano
+// Genera la distribución de asteroides y planetas por el plano
 void distribucion (int nAsteroides, int nPlanetas, int semilla, asteroide *listaAsteroides, planeta *listaPlanetas) {
   uniform_real_distribution<double> xdist{0.0, nextafter(WIDTH, numeric_limits<double>::max())};
   uniform_real_distribution<double> ydist{0.0, nextafter(HEIGHT, numeric_limits<double>::max())};
@@ -46,11 +47,12 @@ void distribucion (int nAsteroides, int nPlanetas, int semilla, asteroide *lista
       double x = xdist(re);
       double y = ydist(re);
       double m = mdist(re);
-      ////cout<<"X: "<< x << " Y:  " <<y <<" M: "<< m<<endl;
-
+     
     asteroide aux= asteroide(x, y, m);
     listaAsteroides[i]=aux;
   }
+
+  //Establecemos cada planeta en uno de los ejes del espacio de manera ordenada
   for (int i=0; i<nPlanetas ; ++i) {
     planeta aux;
     if(i%4==0) {
@@ -78,6 +80,7 @@ void distribucion (int nAsteroides, int nPlanetas, int semilla, asteroide *lista
   }
 }
 
+//Generador del archivo de inicialización 
 void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAsteroides, int nIteraciones, int nPlanetas, unsigned int semilla) {
   ofstream fs ("init_conf.txt");
   fs.precision(3);
@@ -91,9 +94,10 @@ void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAs
     fs.close();
   } else cout << "Unable to open file";
 }
-//TO DO:Cambiar nombre del archivo
+
+//Generador del archivo de resultados
 void archivoFinal (asteroide *listaAsteroides, int nAsteroides) {
-  ofstream fs ("nuestroOut-par.txt");
+  ofstream fs ("out.txt");
   fs.precision(3);
   if (fs.is_open()) {
     for (int i=0; i<nAsteroides; i++)
@@ -114,10 +118,8 @@ int main (int argc, char** argv) {
   int nIteraciones = atoi(argv[2]);
   int nPlanetas = atoi(argv[3]);
   unsigned int semilla = atoi(argv[4]);
-  //cout << "nAsteroides: " << nAsteroides << "\nnIteraciones: " << nIteraciones << "\nnPlanetas: " << nPlanetas << "\nsemilla: " << semilla << endl;
-
+ 
   // I. Creación de todos los asteroides, y para cada uno obtener su pos X, pos Y y masa.
-  // asteroide listaAsteroides [];
   asteroide *listaAsteroides = new asteroide[nAsteroides];
 
   // II. Creación de todos los planetas, y para cada uno obtener su pos X, pos Y y masa
@@ -127,17 +129,17 @@ int main (int argc, char** argv) {
   // Escribimos el fichero con los valores iniciales
   archivoInicial(listaPlanetas, listaAsteroides, nAsteroides, nIteraciones, nPlanetas, semilla);
 
+  // Declarar los arrays dinámicos
   double **distanciasAsteroides = new double*[nAsteroides];
   double **distanciasAstPlanetas = new double*[nAsteroides];
   double **pendienteAsteroides = new double*[nAsteroides];
   double **pendienteAstPlanetas = new double*[nAsteroides];
   double **angulosAsteroides = new double*[nAsteroides];
   double **angulosAstPlanetas = new double*[nAsteroides];
-  // Declarar los arrays dinamicos
 
-   //#pragma omp parallel shared(distanciasAsteroides, distanciasAstPlanetas, pendienteAsteroides, pendienteAstPlanetas, angulosAsteroides, angulosAstPlanetas) num_threads(16)
-   //{
-     #pragma omp parallel for num_threads(16)
+
+  // Inicialización de arrays dinámicos
+  //#pragma omp parallel for num_threads(16)
      for(int i = 0; i<nAsteroides; ++i) {
         distanciasAsteroides[i] = new double[nAsteroides];
         distanciasAstPlanetas[i] = new double[nPlanetas];
@@ -146,32 +148,26 @@ int main (int argc, char** argv) {
         angulosAsteroides[i] = new double[nAsteroides];
         angulosAstPlanetas[i] = new double[nPlanetas];
     }
-// }
-
 
   // III. Bucle de iteraciones:
   for (int t = 0; t < nIteraciones; ++t) {
     double **fuerzasX = new double*[nAsteroides];
     double **fuerzasY = new double*[nAsteroides];
 
-    #pragma omp parallel for schedule(static) num_threads(16)
+    //#pragma omp parallel for schedule(static) num_threads(16)
       for(int i = 0; i<nAsteroides; ++i){
         fuerzasX[i] = new double[nAsteroides+nPlanetas];
         fuerzasY[i] = new double[nAsteroides+nPlanetas];
       }
     // 0. Calculo de todas las fuerzas que afectan a todos los asteroides (calcular primero las fuerzas del asteroide "i" con el resto de asteroides y luego con el resto de planetas).
-    //cout << "\n\nITERACION " << t << endl;
-    //cout << "\n Asteroides vs Asteroides"<<endl;
-    // #pragma omp parallel for num_threads(8)
-    // --> deberia paralelizarse en guiado o dinamico
 
-   #pragma omp parallel for schedule(dynamic) num_threads(16)
+   #pragma omp parallel for schedule(dynamic) num_threads(4)
     for (int i=0; i < nAsteroides; ++i) {
       double fx;
       double fy;
       // Calculamos fuertzas asteroides-asteroidess
 
-  //  #pragma omp parallel for schedule(static) num_threads(8)
+  //#pragma omp parallel for schedule(static) num_threads(8)
       for (int j=i+1; j < nAsteroides; ++j) {
         // 1. Distancias
         distanciasAsteroides[i][j] = pow(pow(listaAsteroides[i].x - listaAsteroides[j].x, 2) + pow(listaAsteroides[i].y - listaAsteroides[j].y, 2), 0.5);
@@ -193,10 +189,7 @@ int main (int argc, char** argv) {
           f = ((f > 200) ? 200 : f);
           fx = f*cos(angulosAsteroides[i][j]);
           fy = f* sin(angulosAsteroides[i][j]);
-
-
-          //cout << i << " "<<j<<" "<<pow(pow(fx,2)+pow(fy,2),0.5)<<" "<<angulosAsteroides[i][j]<<endl;
-
+	  //Almacenamos las fuerzas que ejercen unos asteroides sobre otros para poder sumarlos posteriormente
           fuerzasX[i][j] = fx;
           fuerzasY[i][j] = fy;
           fuerzasX[j][i] = -fx;
@@ -205,7 +198,6 @@ int main (int argc, char** argv) {
       }
 
       // Calculamos fuertzas asteroides-planetas
-      //cout << "\n Asteroides vs Planetas"<<endl;
       for (int j=0; j < nPlanetas; ++j) {
         // 1. Distancias
         distanciasAstPlanetas[i][j] = pow(pow(listaAsteroides[i].x - listaPlanetas[j].x, 2) + pow(listaAsteroides[i].y - listaPlanetas[j].y, 2), 0.5);
@@ -230,32 +222,27 @@ int main (int argc, char** argv) {
           fx=0;
           fy=0;
         }
-        ////cout << i << " " << j << " " << pow(pow(fx,2)+pow(fy,2),0.5) << " " << angulosAstPlanetas[i][j] << endl;
         fuerzasX[i][j+nAsteroides] += fx;
         fuerzasY[i][j+nAsteroides] += fy;
       }
     }
-    // TO DO: (borrar este comentario) sumar fuerzas aqui en fuerzasAc en secuencial
+    //Sumamos las fuerzas de manera secuencial
     double * fuerzasAcX = new double[nAsteroides];
     double * fuerzasAcY = new double[nAsteroides];
-    //--->intentar paralelizar en dos th x e y
-   // #pragma omp parallel num_threads(2)
-    //{
-   // int num = omp_get_thread_num();
+ 
     for(int i=0; i<nAsteroides; ++i){
       for(int j=0; j<nAsteroides+nPlanetas; ++j){
-       //    if(num==0)
+
             fuerzasAcX[i] += fuerzasX[i][j];
-        //  if(num==1)
             fuerzasAcY[i] += fuerzasY[i][j];
         }
       }
-   // }
-    // CÁLCULO DE COLISIONES
-    // To Do: paralelizar
 
- #pragma omp parallel for schedule(dynamic) num_threads(16)
+
+    // CÁLCULO DE COLISIONES
+    #pragma omp parallel for schedule(dynamic) num_threads(4)
     for (int i = 0; i < nAsteroides; ++i) {
+      //Cálculo de aceleración y velocidad
       listaAsteroides[i].aceleracion[0] = fuerzasAcX[i]/listaAsteroides[i].masa;
       listaAsteroides[i].aceleracion[1] = fuerzasAcY[i]/listaAsteroides[i].masa;
       listaAsteroides[i].velocidad[0] = listaAsteroides[i].velocidad[0] + listaAsteroides[i].aceleracion[0]*TIMEINTERVAL;
@@ -284,16 +271,13 @@ int main (int argc, char** argv) {
       }
 
        // 3.2. Rebote entre asteroides.
-       // TO DO: paralelizar
        int parar= 0;
 
      // #pragma omp parallel for schedule(dynamic) num_threads(8)
        for (int j=i+1; j < nAsteroides; ++j) {
 
          if(parar==0 && distanciasAsteroides[i][j] <= DMIN) {
-           //TO DO quitar //cout
-           //cout <<"\nHa chocado " <<i <<" con " << j <<" con distancia   " << distanciasAsteroides[i][j] << endl;
-           double swap = listaAsteroides[i].velocidad[0];
+	   double swap = listaAsteroides[i].velocidad[0];
            listaAsteroides[i].velocidad[0] = listaAsteroides[j].velocidad[0];
            listaAsteroides[j].velocidad[0] = swap;
            swap = listaAsteroides[i].velocidad[1];

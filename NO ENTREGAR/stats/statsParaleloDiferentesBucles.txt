@@ -1,0 +1,15 @@
+
+250, 50, 250, 10, 20, par, par 2 pragma 4, 310148.75
+250, 100, 250, 10, 20, par, par 2 pragma 4, 601318.85
+500, 50, 250, 10, 20, par, par 2 pragma 4, 909900.4
+500, 100, 250, 10, 20, par, par 2 pragma 4, 1675858.3
+
+250, 50, 250, 10, 20, par, 1 bucle par 2 pragma 4, 343922.45
+250, 100, 250, 10, 20, par, 1 bucle par 2 pragma 4, 714304.85
+500, 50, 250, 10, 20, par, 1 bucle par 2 pragma 4, 1752696.2
+500, 100, 250, 10, 20, par, 1 bucle par 2 pragma 4, 6764514.45
+
+250, 50, 250, 10, 20, par, 2 bucle par 2 pragma 4, 1141121.45
+250, 100, 250, 10, 20, par, 2 bucle par 2 pragma 4, 1933503.4
+500, 50, 250, 10, 20, par, 2 bucle par 2 pragma 4, 2590152.25
+500, 100, 250, 10, 20, par, 2 bucle par 2 pragma 4, 5189050.45
