@@ -167,7 +167,7 @@ int main (int argc, char** argv) {
       double fy;
       // Calculamos fuerzas asteroides-asteroidess
 
-  //#pragma omp parallel for schedule(static) num_threads(8)
+      //#pragma omp parallel for schedule(static) num_threads(8)
       for (int j=i+1; j < nAsteroides; ++j) {
         // 1. Distancias
         distanciasAsteroides[i][j] = pow(pow(listaAsteroides[i].x - listaAsteroides[j].x, 2) + pow(listaAsteroides[i].y - listaAsteroides[j].y, 2), 0.5);
@@ -189,7 +189,7 @@ int main (int argc, char** argv) {
           f = ((f > 200) ? 200 : f);
           fx = f*cos(angulosAsteroides[i][j]);
           fy = f* sin(angulosAsteroides[i][j]);
-	  //Almacenamos las fuerzas que ejercen unos asteroides sobre otros para poder sumarlos posteriormente
+	        //Almacenamos las fuerzas que ejercen unos asteroides sobre otros para poder sumarlos posteriormente
           fuerzasX[i][j] = fx;
           fuerzasY[i][j] = fy;
           fuerzasX[j][i] = -fx;
