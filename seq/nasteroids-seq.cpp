@@ -7,6 +7,7 @@
 #include <stdio.h>
 using namespace std;
 
+//Constantes predefinidas en el enunciado del problema
 const int WIDTH = 200;
 const int HEIGHT = 200;
 const int MASS = 1000;
@@ -34,7 +35,7 @@ struct planeta {
 };
 
 
-// Genera la distribución de asteroides por el plano
+// Genera la distribución de asteroides y planetas por el plano
 void distribucion (int nAsteroides, int nPlanetas, int semilla, asteroide *listaAsteroides, planeta *listaPlanetas) {
   uniform_real_distribution<double> xdist{0.0, nextafter(WIDTH, numeric_limits<double>::max())};
   uniform_real_distribution<double> ydist{0.0, nextafter(HEIGHT, numeric_limits<double>::max())};
@@ -44,11 +45,13 @@ void distribucion (int nAsteroides, int nPlanetas, int semilla, asteroide *lista
       double x = xdist(re);
       double y = ydist(re);
       double m = mdist(re);
-      //cout<<"X: "<< x << " Y:  " <<y <<" M: "<< m<<endl;
 
     asteroide aux= asteroide(x, y, m);
     listaAsteroides[i]=aux;
   }
+
+
+  //Establecemos cada planeta en uno de los ejes del espacio de manera ordenada
   for (int i=0; i<nPlanetas ; ++i) {
     planeta aux;
     if(i%4==0) {
@@ -76,6 +79,7 @@ void distribucion (int nAsteroides, int nPlanetas, int semilla, asteroide *lista
   }
 }
 
+//Generador del archivo de inicialización
 void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAsteroides, int nIteraciones, int nPlanetas, unsigned int semilla) {
   ofstream fs ("init_conf.txt");
   fs.precision(3);
@@ -89,9 +93,10 @@ void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAs
     fs.close();
   } else cout << "Unable to open file";
 }
-//TO DO:Cambiar nombre del archivo
+
+//Generador del archivo de resultados
 void archivoFinal (asteroide *listaAsteroides, int nAsteroides) {
-  ofstream fs ("nuestroOut-seq.txt");
+  ofstream fs ("out.txt");
   fs.precision(3);
   if (fs.is_open()) {
     for (int i=0; i<nAsteroides; i++)
@@ -112,7 +117,6 @@ int main (int argc, char** argv) {
   int nIteraciones = atoi(argv[2]);
   int nPlanetas = atoi(argv[3]);
   unsigned int semilla = atoi(argv[4]);
-  cout << "nAsteroides: " << nAsteroides << "\nnIteraciones: " << nIteraciones << "\nnPlanetas: " << nPlanetas << "\nsemilla: " << semilla << endl;
 
   // I. Creación de todos los asteroides, y para cada uno obtener su pos X, pos Y y masa.
   // asteroide listaAsteroides [];
@@ -133,6 +137,7 @@ int main (int argc, char** argv) {
   double **angulosAsteroides = new double*[nAsteroides];
   double **angulosAstPlanetas = new double*[nAsteroides];
 
+  // Inicialización de arrays dinámicos
   for(int i = 0; i<nAsteroides; ++i){
     distanciasAsteroides[i] = new double[nAsteroides];
     distanciasAstPlanetas[i] = new double[nPlanetas];
@@ -145,19 +150,15 @@ int main (int argc, char** argv) {
   // III. Bucle de iteraciones:
   for (int t = 0; t < nIteraciones; ++t) {
     // 0. Calculo de todas las fuerzas que afectan a todos los asteroides (calcular primero las fuerzas del asteroide "i" con el resto de asteroides y luego con el resto de planetas).
-    // cout << "\n\nITERACION " << t << endl;
-    // cout << "\n Asteroides vs Asteroides"<<endl;
     double *fuerzasX = new double[nAsteroides];
     double *fuerzasY = new double[nAsteroides];
     for (int i=0; i < nAsteroides; ++i) {
       double fx;
       double fy;
-      // Calculamos fuertzas asteroides-asteroidess
+      // Calculamos fuerzas asteroides-asteroidess
       for (int j=i+1; j < nAsteroides; ++j) {
         // 1. Distancias
         distanciasAsteroides[i][j] = pow(pow(listaAsteroides[i].x - listaAsteroides[j].x, 2) + pow(listaAsteroides[i].y - listaAsteroides[j].y, 2), 0.5);
-
-
 
         // 2. Movimiento normal
         // 2.1. Ángulo de influencia
@@ -171,15 +172,12 @@ int main (int argc, char** argv) {
           // 2.1.c. Cálculo del ángulo
           angulosAsteroides[i][j] = atan(pendienteAsteroides[i][j]);
           // 2.2. Fuerzas de atracción
-          //fx = ((GRAVITY * listaAsteroides[i].masa * listaAsteroides[j].masa)/ pow(distanciasAsteroides[i][j], 2)) * cos(angulosAsteroides[i][j]);
-          //fy = ((GRAVITY * listaAsteroides[i].masa * listaAsteroides[j].masa)/ pow(distanciasAsteroides[i][j], 2)) * sin(angulosAsteroides[i][j]);
           double f = ((GRAVITY * listaAsteroides[i].masa * listaAsteroides[j].masa)/ pow(distanciasAsteroides[i][j], 2));
 
           f = ((f > 200) ? 200 : f);
           fx = f*cos(angulosAsteroides[i][j]);
           fy = f* sin(angulosAsteroides[i][j]);
-
-          //cout << i << " "<<j<<" "<<pow(pow(fx,2)+pow(fy,2),0.5)<<" "<<angulosAsteroides[i][j]<<endl;
+          //Almacenamos las fuerzas que ejercen unos asteroides sobre otros para poder sumarlos posteriormente
           fuerzasX[i] += fx;
           fuerzasY[i] += fy;
           fuerzasX[j] -= fx;
@@ -188,8 +186,6 @@ int main (int argc, char** argv) {
       }
 
       // Calculamos fuertzas asteroides-planetas
-      // cout << "\n Asteroides vs Planetas"<<endl;
-
       for (int j=0; j < nPlanetas; ++j) {
         // 1. Distancias
         distanciasAstPlanetas[i][j] = pow(pow(listaAsteroides[i].x - listaPlanetas[j].x, 2) + pow(listaAsteroides[i].y - listaPlanetas[j].y, 2), 0.5);
@@ -215,7 +211,6 @@ int main (int argc, char** argv) {
           fx=0;
           fy=0;
         }
-        // cout << i << " " << j << " " << pow(pow(fx,2)+pow(fy,2),0.5) << " " << angulosAstPlanetas[i][j] << endl;
         fuerzasX[i] += fx;
         fuerzasY[i] += fy;
       }
@@ -251,13 +246,10 @@ int main (int argc, char** argv) {
       }
 
        // 3.2. Rebote entre asteroides.
-       // TO DO: Verificar que esto funciona y que se puedan usar breaks
        int parar= 0;
        for (int j=i+1; j < nAsteroides; ++j) {
 
          if(parar==0 && distanciasAsteroides[i][j] <= DMIN) {
-           //TO DO quitar cout
-           // cout <<"\nHa chocado " <<i <<" con " << j <<" con distancia   " << distanciasAsteroides[i][j] << endl;
            double swap = listaAsteroides[i].velocidad[0];
            listaAsteroides[i].velocidad[0] = listaAsteroides[j].velocidad[0];
            listaAsteroides[j].velocidad[0] = swap;
@@ -273,6 +265,25 @@ int main (int argc, char** argv) {
   archivoFinal(listaAsteroides,nAsteroides);
   auto end = chrono::system_clock::now();
   auto diff = chrono::duration_cast<chrono::microseconds>(end-start);
-  cout << "El programa ha tardado " << diff.count() << " microsegundos\n";
+  //cout << "El programa ha tardado " << diff.count() << " microsegundos\n";
+  //Eliminamos memoria
+
+
+  // Inicialización de arrays dinámicos
+  for(int i = 0; i<nAsteroides; ++i){
+    delete [] distanciasAsteroides[i];
+    delete [] distanciasAstPlanetas[i];
+    delete [] pendienteAsteroides[i];
+    delete [] pendienteAstPlanetas[i];
+    delete [] angulosAsteroides[i];
+    delete [] angulosAstPlanetas[i];
+  }
+  delete [] distanciasAsteroides;
+  delete [] distanciasAstPlanetas;
+  delete [] pendienteAsteroides;
+  delete [] pendienteAstPlanetas;
+  delete [] angulosAsteroides;
+  delete [] angulosAstPlanetas;
+
   return 0;
 }

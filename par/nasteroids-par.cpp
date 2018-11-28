@@ -47,7 +47,7 @@ void distribucion (int nAsteroides, int nPlanetas, int semilla, asteroide *lista
       double x = xdist(re);
       double y = ydist(re);
       double m = mdist(re);
-     
+
     asteroide aux= asteroide(x, y, m);
     listaAsteroides[i]=aux;
   }
@@ -80,7 +80,7 @@ void distribucion (int nAsteroides, int nPlanetas, int semilla, asteroide *lista
   }
 }
 
-//Generador del archivo de inicialización 
+//Generador del archivo de inicialización
 void archivoInicial (planeta *listaPlanetas, asteroide *listaAsteroides, int nAsteroides, int nIteraciones, int nPlanetas, unsigned int semilla) {
   ofstream fs ("init_conf.txt");
   fs.precision(3);
@@ -118,7 +118,7 @@ int main (int argc, char** argv) {
   int nIteraciones = atoi(argv[2]);
   int nPlanetas = atoi(argv[3]);
   unsigned int semilla = atoi(argv[4]);
- 
+
   // I. Creación de todos los asteroides, y para cada uno obtener su pos X, pos Y y masa.
   asteroide *listaAsteroides = new asteroide[nAsteroides];
 
@@ -165,7 +165,7 @@ int main (int argc, char** argv) {
     for (int i=0; i < nAsteroides; ++i) {
       double fx;
       double fy;
-      // Calculamos fuertzas asteroides-asteroidess
+      // Calculamos fuerzas asteroides-asteroidess
 
   //#pragma omp parallel for schedule(static) num_threads(8)
       for (int j=i+1; j < nAsteroides; ++j) {
@@ -229,7 +229,7 @@ int main (int argc, char** argv) {
     //Sumamos las fuerzas de manera secuencial
     double * fuerzasAcX = new double[nAsteroides];
     double * fuerzasAcY = new double[nAsteroides];
- 
+
     for(int i=0; i<nAsteroides; ++i){
       for(int j=0; j<nAsteroides+nPlanetas; ++j){
 
@@ -277,7 +277,7 @@ int main (int argc, char** argv) {
        for (int j=i+1; j < nAsteroides; ++j) {
 
          if(parar==0 && distanciasAsteroides[i][j] <= DMIN) {
-	   double swap = listaAsteroides[i].velocidad[0];
+	         double swap = listaAsteroides[i].velocidad[0];
            listaAsteroides[i].velocidad[0] = listaAsteroides[j].velocidad[0];
            listaAsteroides[j].velocidad[0] = swap;
            swap = listaAsteroides[i].velocidad[1];
@@ -292,6 +292,21 @@ int main (int argc, char** argv) {
   archivoFinal(listaAsteroides,nAsteroides);
   auto end = chrono::system_clock::now();
   auto diff = chrono::duration_cast<chrono::microseconds>(end-start);
-  cout << "El programa ha tardado " << diff.count() << " microsegundos\n";
+  //cout << "El programa ha tardado " << diff.count() << " microsegundos\n";
+  for(int i = 0; i<nAsteroides; ++i){
+    delete [] distanciasAsteroides[i];
+    delete [] distanciasAstPlanetas[i];
+    delete [] pendienteAsteroides[i];
+    delete [] pendienteAstPlanetas[i];
+    delete [] angulosAsteroides[i];
+    delete [] angulosAstPlanetas[i];
+  }
+  delete [] distanciasAsteroides;
+  delete [] distanciasAstPlanetas;
+  delete [] pendienteAsteroides;
+  delete [] pendienteAstPlanetas;
+  delete [] angulosAsteroides;
+  delete [] angulosAstPlanetas;
+
   return 0;
 }
